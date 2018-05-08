@@ -1,3 +1,4 @@
+import ./roots
 import math
 
 type
@@ -36,20 +37,38 @@ template checkNormal(x: float) =
 proc pmf*(d: FloatDistribution, x: float): float {.inline.} =
   d.pmf(x)
 
+proc pmf*(d: FloatDistribution): (proc(x: float): float) {.inline.} =
+  d.pmf
+
 proc pmf*(d: IntDistribution, x: int): float {.inline.} =
   d.pmf(x)
+
+proc pmf*(d: IntDistribution): (proc(x: int): float) {.inline.} =
+  d.pmf
 
 proc cdf*(d: FloatDistribution, x: float): float {.inline.} =
   d.cdf(x)
 
+proc cdf*(d: FloatDistribution): (proc(x: float): float) {.inline.} =
+  d.cdf
+
 proc cdf*(d: IntDistribution, x: int): float {.inline.} =
   d.cdf(x)
+
+proc cdf*(d: IntDistribution): (proc(x: int): float) {.inline.} =
+  d.cdf
 
 proc quantile*(d: FloatDistribution, q: float): float {.inline.} =
   d.quantile(q)
 
+proc quantile*(d: FloatDistribution): (proc(q: float): float) {.inline.} =
+  d.quantile
+
 proc quantile*(d: IntDistribution, q: float): int {.inline.} =
   d.quantile(q)
+
+proc quantile*(d: IntDistribution): (proc(q: float): int) {.inline.} =
+  d.quantile
 
 converter PointMassDistribution*(d: PointMass): FloatDistribution =
   FloatDistribution(
@@ -98,7 +117,7 @@ converter BernoulliDistribution*(d: Bernoulli): IntDistribution =
 
 converter BinomialDistribution*(d: Binomial): IntDistribution =
   let q = 1.0 - d.p
-  IntDistribution(
+  result = IntDistribution(
     pmf: proc (x: int): float =
       if x >= 0:
         result = float(binom(d.n, x)) * pow(d.p, float(x)) * pow(q, float(d.n - x)),
@@ -106,10 +125,14 @@ converter BinomialDistribution*(d: Binomial): IntDistribution =
       for i in 0..x:
         result += float(binom(d.n, i)) * pow(d.p, float(i)) * pow(q, float(d.n - i))
   )
+  let dist = addr result
+  result.quantile = proc (x: float): int =
+    checkNormal(x)
+    discreteInf(dist[].cdf, x, 0)
 
 converter GeometricDistribution*(d: Geometric): IntDistribution =
   let q = 1.0 - d.p
-  IntDistribution(
+  result = IntDistribution(
     pmf: proc (x: int): float =
       if x > 0:
         result = d.p * pow(q, float(x - 1)),
@@ -117,10 +140,14 @@ converter GeometricDistribution*(d: Geometric): IntDistribution =
       if x > 0:
         result = 1.0 - pow(q, float(x))
   )
+  let dist = addr result
+  result.quantile = proc (x: float): int =
+    checkNormal(x)
+    discreteInf(dist[].cdf, x, 1)
 
 converter PoissonDistribution*(d: Poisson): IntDistribution =
   let nlambda = exp(-1.0 * d.lambda)
-  IntDistribution(
+  result = IntDistribution(
     pmf: proc (x: int): float =
       if x >= 0:
         result = pow(d.lambda, float(x)) * nlambda / float(fac(x)),
@@ -129,6 +156,10 @@ converter PoissonDistribution*(d: Poisson): IntDistribution =
         result += pow(d.lambda, float(i)) / float(fac(i))
       result *= nlambda
   )
+  let dist = addr result
+  result.quantile = proc (x: float): int =
+    checkNormal(x)
+    discreteInf(dist[].cdf, x, 0)
 
 converter UniformDistribution*(d: Uniform): FloatDistribution =
   let r = d.b - d.a
