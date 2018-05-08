@@ -30,6 +30,9 @@ type
     mean*: float
     variance*: float
 
+template checkNormal(x: float) =
+  assert(0.0 <= x and x <= 1.0)
+
 proc pmf*(d: FloatDistribution, x: float): float {.inline.} =
   d.pmf(x)
 
@@ -55,17 +58,24 @@ converter PointMassDistribution*(d: PointMass): FloatDistribution =
         result = 1.0,
     cdf: proc (x: float): float =
       if x >= d.a:
-        result = 1.0
+        result = 1.0,
+    quantile: proc (x: float): float =
+      checkNormal(x)
+      d.a
   )
 
 converter DiscreteUniformDistribution*(d: DiscreteUniform): IntDistribution =
-  let kinv = 1.0 / float(d.k)
+  let kf = float(d.k)
+  let kinv = 1.0 / kf
   IntDistribution(
     pmf: proc (x: int): float =
       if 1 <= x and x <= d.k:
         result = kinv,
     cdf: proc (x: int): float =
-      min(1.0, max(0.0, kinv * float(x)))
+      min(1.0, max(0.0, kinv * float(x))),
+    quantile: proc (x: float): int =
+      checkNormal(x)
+      int(ceil(kf * x))
   )
 
 converter BernoulliDistribution*(d: Bernoulli): IntDistribution =
@@ -79,7 +89,11 @@ converter BernoulliDistribution*(d: Bernoulli): IntDistribution =
     cdf: proc (x: int): float =
       if x < 0: 0.0
       elif x < 1: q
-      else: 1.0
+      else: 1.0,
+    quantile: proc (x: float): int =
+      checkNormal(x)
+      if x < q: 0
+      else: 1
   )
 
 converter BinomialDistribution*(d: Binomial): IntDistribution =
@@ -124,17 +138,23 @@ converter UniformDistribution*(d: Uniform): FloatDistribution =
       if d.a <= x and x <= d.b:
         result = rinv,
     cdf: proc (x: float): float =
-      min(1.0, max(0.0, (x - d.a) * rinv))
+      min(1.0, max(0.0, (x - d.a) * rinv)),
+    quantile: proc (x: float): float =
+      checkNormal(x)
+      x
   )
 
 converter NormalDistribution*(d: Normal): FloatDistribution =
   let dnorm = 1.0 / sqrt(2.0 * PI * d.variance)
   let vnorm = 1.0 / (2.0 * d.variance)
-  let r2v = 1.0 / sqrt(2.0 * d.variance)
+  let r2v = sqrt(2.0 * d.variance)
   FloatDistribution(
     pmf: proc (x: float): float =
       let xm = x - d.mean
       dnorm / exp(vnorm * xm * xm),
     cdf: proc (x: float): float =
-      0.5 * (1.0 + erf((x - d.mean) * r2v))
+      0.5 * (1.0 + erf((x - d.mean) / r2v)),
+    quantile: proc (x: float): float =
+      checkNormal(x)
+      d.mean + (r2v * erfc((2 * x) - 1))
   )
