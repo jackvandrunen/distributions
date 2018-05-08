@@ -4,9 +4,11 @@ type
   FloatDistribution* = object
     pmf*: proc(x: float): float
     cdf*: proc(x: float): float
+    quantile*: proc(q: float): float
   IntDistribution* = object
     pmf*: proc(x: int): float
     cdf*: proc(x: int): float
+    quantile*: proc(q: float): int
 
   PointMass* = object
     a*: float
@@ -21,18 +23,30 @@ type
     p*: float
   Poisson* = object
     lambda*: float
+  Uniform* = object
+    a*: float
+    b*: float
+  Normal* = object
+    mean*: float
+    variance*: float
 
-proc pmf*(d: FloatDistribution, x: float): float =
+proc pmf*(d: FloatDistribution, x: float): float {.inline.} =
   d.pmf(x)
 
-proc pmf*(d: IntDistribution, x: int): float =
+proc pmf*(d: IntDistribution, x: int): float {.inline.} =
   d.pmf(x)
 
-proc cdf*(d: FloatDistribution, x: float): float =
+proc cdf*(d: FloatDistribution, x: float): float {.inline.} =
   d.cdf(x)
 
-proc cdf*(d: IntDistribution, x: int): float =
+proc cdf*(d: IntDistribution, x: int): float {.inline.} =
   d.cdf(x)
+
+proc quantile*(d: FloatDistribution, q: float): float {.inline.} =
+  d.quantile(q)
+
+proc quantile*(d: IntDistribution, q: float): int {.inline.} =
+  d.quantile(q)
 
 converter PointMassDistribution*(d: PointMass): FloatDistribution =
   FloatDistribution(
@@ -100,4 +114,27 @@ converter PoissonDistribution*(d: Poisson): IntDistribution =
       for i in 0..x:
         result += pow(d.lambda, float(i)) / float(fac(i))
       result *= nlambda
+  )
+
+converter UniformDistribution*(d: Uniform): FloatDistribution =
+  let r = d.b - d.a
+  let rinv = 1.0 / r
+  FloatDistribution(
+    pmf: proc (x: float): float =
+      if d.a <= x and x <= d.b:
+        result = rinv,
+    cdf: proc (x: float): float =
+      min(1.0, max(0.0, (x - d.a) * rinv))
+  )
+
+converter NormalDistribution*(d: Normal): FloatDistribution =
+  let dnorm = 1.0 / sqrt(2.0 * PI * d.variance)
+  let vnorm = 1.0 / (2.0 * d.variance)
+  let r2v = 1.0 / sqrt(2.0 * d.variance)
+  FloatDistribution(
+    pmf: proc (x: float): float =
+      let xm = x - d.mean
+      dnorm / exp(vnorm * xm * xm),
+    cdf: proc (x: float): float =
+      0.5 * (1.0 + erf((x - d.mean) * r2v))
   )
