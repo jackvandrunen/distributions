@@ -1,9 +1,12 @@
 import math
 
 type
-  Distribution* = object
+  FloatDistribution* = object
     pmf*: proc(x: float): float
     cdf*: proc(x: float): float
+  IntDistribution* = object
+    pmf*: proc(x: int): float
+    cdf*: proc(x: int): float
 
   PointMass* = object
     a*: float
@@ -19,20 +22,20 @@ type
   Poisson* = object
     lambda*: float
 
-proc integer(x: float): bool =
-  floor(x) == x
-
-proc integerIn(x, a, b: float): bool =
-  integer(x) and a <= x and x <= b
-
-proc pmf*(d: Distribution, x: float): float =
+proc pmf*(d: FloatDistribution, x: float): float =
   d.pmf(x)
 
-proc cdf*(d: Distribution, x: float): float =
+proc pmf*(d: IntDistribution, x: int): float =
+  d.pmf(x)
+
+proc cdf*(d: FloatDistribution, x: float): float =
   d.cdf(x)
 
-converter PointMassDistribution*(d: PointMass): Distribution =
-  Distribution(
+proc cdf*(d: IntDistribution, x: int): float =
+  d.cdf(x)
+
+converter PointMassDistribution*(d: PointMass): FloatDistribution =
+  FloatDistribution(
     pmf: proc (x: float): float =
       if x == d.a:
         result = 1.0,
@@ -41,63 +44,60 @@ converter PointMassDistribution*(d: PointMass): Distribution =
         result = 1.0
   )
 
-converter DiscreteUniformDistribution*(d: DiscreteUniform): Distribution =
-  let kf = float(d.k)
-  Distribution(
-    pmf: proc (x: float): float =
-      if x.integerIn(1.0, kf):
-        result = 1.0 / kf,
-    cdf: proc (x: float): float =
-      min(1.0, max(0.0, floor(x) / float(d.k)))
+converter DiscreteUniformDistribution*(d: DiscreteUniform): IntDistribution =
+  let kinv = 1.0 / float(d.k)
+  IntDistribution(
+    pmf: proc (x: int): float =
+      if 1 <= x and x <= d.k:
+        result = kinv,
+    cdf: proc (x: int): float =
+      min(1.0, max(0.0, kinv * float(x)))
   )
 
-converter BernoulliDistribution*(d: Bernoulli): Distribution =
-  Distribution(
-    pmf: proc (x: float): float =
-      if x == 0.0:
-        result = 1 - d.p
-      elif x == 1.0:
+converter BernoulliDistribution*(d: Bernoulli): IntDistribution =
+  let q = 1.0 - d.p
+  IntDistribution(
+    pmf: proc (x: int): float =
+      if x == 0:
+        result = q
+      elif x == 1:
         result = d.p,
-    cdf: proc (x: float): float =
-      if x < 0.0: 0.0
-      elif x < 1.0: 1.0 - d.p
+    cdf: proc (x: int): float =
+      if x < 0: 0.0
+      elif x < 1: q
       else: 1.0
   )
 
-converter BinomialDistribution*(d: Binomial): Distribution =
+converter BinomialDistribution*(d: Binomial): IntDistribution =
   let q = 1.0 - d.p
-  Distribution(
-    pmf: proc (x: float): float =
-      if integer(x) and x >= 0.0:
-        let xi = int(x)
-        result = float(binom(d.n, xi)) * pow(d.p, x) * pow(q, float(d.n - xi)),
-    cdf: proc (x: float): float =
-      let xi = int(x)
-      let ptx = pow(d.p, x)
-      for i in 0..xi:
+  IntDistribution(
+    pmf: proc (x: int): float =
+      if x >= 0:
+        result = float(binom(d.n, x)) * pow(d.p, float(x)) * pow(q, float(d.n - x)),
+    cdf: proc (x: int): float =
+      for i in 0..x:
         result += float(binom(d.n, i)) * pow(d.p, float(i)) * pow(q, float(d.n - i))
   )
 
-converter GeometricDistribution*(d: Geometric): Distribution =
+converter GeometricDistribution*(d: Geometric): IntDistribution =
   let q = 1.0 - d.p
-  Distribution(
-    pmf: proc (x: float): float =
-      if integer(x) and x > 0.0:
-        result = d.p * pow(q, x - 1.0),
-    cdf: proc (x: float): float =
-      if x > 0.0:
-        result = 1.0 - pow(q, floor(x))
+  IntDistribution(
+    pmf: proc (x: int): float =
+      if x > 0:
+        result = d.p * pow(q, float(x - 1)),
+    cdf: proc (x: int): float =
+      if x > 0:
+        result = 1.0 - pow(q, float(x))
   )
 
-converter PoissonDistribution*(d: Poisson): Distribution =
+converter PoissonDistribution*(d: Poisson): IntDistribution =
   let nlambda = exp(-1.0 * d.lambda)
-  Distribution(
-    pmf: proc (x: float): float =
-      if integer(x) and x >= 0.0:
-        result = pow(d.lambda, x) * nlambda / float(fac(int(x))),
-    cdf: proc (x: float): float =
-      let xi = int(x)
-      for i in 0..xi:
+  IntDistribution(
+    pmf: proc (x: int): float =
+      if x >= 0:
+        result = pow(d.lambda, float(x)) * nlambda / float(fac(x)),
+    cdf: proc (x: int): float =
+      for i in 0..x:
         result += pow(d.lambda, float(i)) / float(fac(i))
       result *= nlambda
   )
