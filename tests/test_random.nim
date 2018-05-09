@@ -1,47 +1,19 @@
 import ../statistics/random
+import ./ut_utils
+import unittest
 
-when isMainModule:
+suite "statistics-random":
   var state = initRand(0)
-  echo "initRand(0)"
-  echo state.rand()
-  echo state.rand()
-  echo state.rand()
-  echo state.rand()
-  echo state.rand()
-  echo()
 
-  echo "default state:"
-  echo rand()
-  echo rand()
-  echo rand()
-  echo rand()
-  echo rand()
-  echo()
+  test "with seed zero":
+    check(approx(state.rand(), 0.60126))
+    check(approx(state.rand(), 0.74777))
+    check(approx(state.rand(), 0.10301))
+    check(approx(state.rand(), 0.41658))
+    check(approx(state.rand(), 0.73299))
 
-  var
-    state1 = initRand()
-    state2 = initRand()
-    state3 = initRand()
-  echo "initRand()"
-  echo state1.rand()
-  echo state1.rand()
-  echo state1.rand()
-  echo state1.rand()
-  echo state1.rand()
-  echo()
-
-  echo "initRand()"
-  echo state2.rand()
-  echo state2.rand()
-  echo state2.rand()
-  echo state2.rand()
-  echo state2.rand()
-  echo()
-
-  echo "initRand()"
-  echo state3.rand()
-  echo state3.rand()
-  echo state3.rand()
-  echo state3.rand()
-  echo state3.rand()
-  echo()
+  test "default state (auto-seeded)":
+    let
+      x = rand()
+      y = rand()
+    check(x != y)

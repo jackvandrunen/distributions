@@ -32,7 +32,8 @@ type
     variance*: float
 
 template checkNormal(x: float) =
-  assert(0.0 <= x and x <= 1.0)
+  if not (0.0 < x and x < 1.0):
+    raise newException(ValueError, "Quantile function is defined on (0,1)")
 
 proc pmf*(d: FloatDistribution, x: float): float {.inline.} =
   d.pmf(x)
@@ -94,7 +95,7 @@ converter DiscreteUniformDistribution*(d: DiscreteUniform): IntDistribution =
       min(1.0, max(0.0, kinv * float(x))),
     quantile: proc (x: float): int =
       checkNormal(x)
-      int(ceil(kf * x))
+      int(kf * x) + 1
   )
 
 converter BernoulliDistribution*(d: Bernoulli): IntDistribution =
@@ -172,7 +173,7 @@ converter UniformDistribution*(d: Uniform): FloatDistribution =
       min(1.0, max(0.0, (x - d.a) * rinv)),
     quantile: proc (x: float): float =
       checkNormal(x)
-      x
+      r * x
   )
 
 converter NormalDistribution*(d: Normal): FloatDistribution =
