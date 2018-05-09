@@ -188,5 +188,5 @@ converter NormalDistribution*(d: Normal): FloatDistribution =
       0.5 * (1.0 + erf((x - d.mean) / r2v)),
     quantile: proc (x: float): float =
       checkNormal(x)
-      d.mean + (r2v * erfc((2 * x) - 1))
+      d.mean + (r2v * erfinv((2.0 * x) - 1.0))
   )
