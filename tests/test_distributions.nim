@@ -8,26 +8,26 @@ template checkQuantileBounds(d): untyped =
     expect(ValueError):
       discard d.quantile(1.1)
 
-suite "statistics-distributions-PointMass":
-  let d = PointMass(a: 1.2)
+suite "statistics-PointMass":
+  let d = PointMass(a: 12)
 
   test "pmf":
-    check(approx(d.pmf(0.9), 0.0))
-    check(approx(d.pmf(1.2), 1.0))
-    check(approx(d.pmf(3.0), 0.0))
+    check(approx(d.pmf(9), 0.0))
+    check(approx(d.pmf(12), 1.0))
+    check(approx(d.pmf(30), 0.0))
 
   test "cdf":
-    check(approx(d.cdf(0.9), 0.0))
-    check(approx(d.cdf(1.2), 1.0))
-    check(approx(d.cdf(3.0), 1.0))
+    check(approx(d.cdf(9), 0.0))
+    check(approx(d.cdf(12), 1.0))
+    check(approx(d.cdf(30), 1.0))
 
   test "quantile":
     checkQuantileBounds(d)
-    check(approx(d.quantile(0.1), 1.2))
-    check(approx(d.quantile(0.5), 1.2))
-    check(approx(d.quantile(0.9), 1.2))
+    check(d.quantile(0.1) == 12)
+    check(d.quantile(0.5) == 12)
+    check(d.quantile(0.9) == 12)
 
-suite "statistics-distributions-DiscreteUniform":
+suite "statistics-DiscreteUniform":
   let d = DiscreteUniform(k: 10)
   
   test "pmf":
@@ -49,7 +49,7 @@ suite "statistics-distributions-DiscreteUniform":
     check(d.quantile(0.75) == 8)
     check(d.quantile(0.9) == 10)
 
-suite "statistics-distributions-Bernoulli":
+suite "statistics-Bernoulli":
   let d = Bernoulli(p: 0.7)
   
   test "pmf":
@@ -71,7 +71,7 @@ suite "statistics-distributions-Bernoulli":
     check(d.quantile(0.31) == 1)
     check(d.quantile(0.7) == 1)
 
-suite "statistics-distributions-Binomial":
+suite "statistics-Binomial":
   let d = Binomial(n: 10, p: 0.35)
 
   test "pmf":
@@ -95,7 +95,7 @@ suite "statistics-distributions-Binomial":
     check(d.quantile(0.51) == 3)
     check(d.quantile(0.97) == 6)
 
-suite "statistics-distributions-Geometric":
+suite "statistics-Geometric":
   let d = Geometric(p: 0.01)
 
   test "pmf":
@@ -120,7 +120,7 @@ suite "statistics-distributions-Geometric":
     check(d.quantile(0.63396) == 100)
     check(d.quantile(0.95095) == 300)
 
-suite "statistics-distributions-Poisson":
+suite "statistics-Poisson":
   let d = Poisson(lambda: 4.0)
 
   test "pmf":
@@ -144,15 +144,15 @@ suite "statistics-distributions-Poisson":
     check(d.quantile(0.62883) == 4)
     check(d.quantile(0.99715) == 10)
 
-suite "statistics-distributions-Uniform":
+suite "statistics-Uniform":
   let d = Uniform(a: 0.0, b: 5.0)
   
-  test "pmf":
-    check(approx(d.pmf(-1.0), 0.0))
-    check(approx(d.pmf(0.0), 0.2))
-    check(approx(d.pmf(1.0), 0.2))
-    check(approx(d.pmf(5.0), 0.2))
-    check(approx(d.pmf(6.0), 0.0))
+  test "pdf":
+    check(approx(d.pdf(-1.0), 0.0))
+    check(approx(d.pdf(0.0), 0.2))
+    check(approx(d.pdf(1.0), 0.2))
+    check(approx(d.pdf(5.0), 0.2))
+    check(approx(d.pdf(6.0), 0.0))
 
   test "cdf":
     check(approx(d.cdf(-1.0), 0.0))
@@ -166,15 +166,15 @@ suite "statistics-distributions-Uniform":
     check(approx(d.quantile(0.2), 1.0))
     check(approx(d.quantile(0.9), 4.5))
 
-suite "statistics-distributions-Normal":
+suite "statistics-Normal":
   let d = Normal(mean: 0.0, variance: 1.0)
 
-  test "pmf":
-    check(approx(d.pmf(-3.4), 0.00123))
-    check(approx(d.pmf(-1.1), 0.21785))
-    check(approx(d.pmf(0.0), 0.39894))
-    check(approx(d.pmf(1.1), 0.21785))
-    check(approx(d.pmf(3.4), 0.00123))
+  test "pdf":
+    check(approx(d.pdf(-3.4), 0.00123))
+    check(approx(d.pdf(-1.1), 0.21785))
+    check(approx(d.pdf(0.0), 0.39894))
+    check(approx(d.pdf(1.1), 0.21785))
+    check(approx(d.pdf(3.4), 0.00123))
 
   test "cdf":
     check(approx(d.cdf(-3.4), 0.000337))
@@ -190,3 +190,34 @@ suite "statistics-distributions-Normal":
     check(approx(d.quantile(0.5), 0.0))
     check(approx(d.quantile(0.864334), 1.1))
     check(approx(d.quantile(0.999663), 3.4))
+
+suite "statistics-Exponential":
+  let d = Exponential(beta: 2.0)
+
+  test "pdf":
+    check(approx(d.pdf(-1.0), 0.0))
+    check(approx(d.pdf(0.0), 0.0))
+    check(approx(d.pdf(1.0), 0.303265))
+    check(approx(d.pdf(5.0), 0.041043))
+
+  test "cdf":
+    check(approx(d.cdf(-1.0), 0.0))
+    check(approx(d.cdf(0.575364), 0.25))
+    check(approx(d.cdf(1.38629), 0.5))
+    check(approx(d.cdf(2.77259), 0.75))
+
+  test "quantile":
+    checkQuantileBounds(d)
+    check(approx(d.quantile(0.25), 0.575364))
+    check(approx(d.quantile(0.5), 1.38629))
+    check(approx(d.quantile(0.75), 2.77259))
+
+suite "statistics-Gamma":
+  # Same as Exponential(beta: 2.0) for easy testing
+  let d = Gamma(alpha: 1.0, beta: 2.0)
+
+  test "pdf":
+    check(approx(d.pdf(-1.0), 0.0))
+    check(approx(d.pdf(0.0), 0.0))
+    check(approx(d.pdf(1.0), 0.303265))
+    check(approx(d.pdf(5.0), 0.041043))

@@ -3,7 +3,7 @@ import math
 
 type
   FloatDistribution* = object
-    pmf*: proc(x: float): float
+    pdf*: proc(x: float): float
     cdf*: proc(x: float): float
     quantile*: proc(q: float): float
   IntDistribution* = object
@@ -12,7 +12,7 @@ type
     quantile*: proc(q: float): int
 
   PointMass* = object
-    a*: float
+    a*: int
   DiscreteUniform* = object
     k*: int
   Bernoulli* = object
@@ -30,16 +30,21 @@ type
   Normal* = object
     mean*: float
     variance*: float
+  Exponential* = object
+    beta*: float
+  Gamma* = object
+    alpha*: float
+    beta*: float
 
 template checkNormal(x: float) =
   if not (0.0 < x and x < 1.0):
     raise newException(ValueError, "Quantile function is defined on (0,1)")
 
-proc pmf*(d: FloatDistribution, x: float): float {.inline.} =
-  d.pmf(x)
+proc pdf*(d: FloatDistribution, x: float): float {.inline.} =
+  d.pdf(x)
 
-proc pmf*(d: FloatDistribution): (proc(x: float): float) {.inline.} =
-  d.pmf
+proc pdf*(d: FloatDistribution): (proc(x: float): float) {.inline.} =
+  d.pdf
 
 proc pmf*(d: IntDistribution, x: int): float {.inline.} =
   d.pmf(x)
@@ -71,15 +76,15 @@ proc quantile*(d: IntDistribution, q: float): int {.inline.} =
 proc quantile*(d: IntDistribution): (proc(q: float): int) {.inline.} =
   d.quantile
 
-converter PointMassDistribution*(d: PointMass): FloatDistribution =
-  FloatDistribution(
-    pmf: proc (x: float): float =
+converter PointMassDistribution*(d: PointMass): IntDistribution =
+  IntDistribution(
+    pmf: proc (x: int): float =
       if x == d.a:
         result = 1.0,
-    cdf: proc (x: float): float =
+    cdf: proc (x: int): float =
       if x >= d.a:
         result = 1.0,
-    quantile: proc (x: float): float =
+    quantile: proc (x: float): int =
       checkNormal(x)
       d.a
   )
@@ -166,7 +171,7 @@ converter UniformDistribution*(d: Uniform): FloatDistribution =
   let r = d.b - d.a
   let rinv = 1.0 / r
   FloatDistribution(
-    pmf: proc (x: float): float =
+    pdf: proc (x: float): float =
       if d.a <= x and x <= d.b:
         result = rinv,
     cdf: proc (x: float): float =
@@ -181,7 +186,7 @@ converter NormalDistribution*(d: Normal): FloatDistribution =
   let vnorm = 1.0 / (2.0 * d.variance)
   let r2v = sqrt(2.0 * d.variance)
   FloatDistribution(
-    pmf: proc (x: float): float =
+    pdf: proc (x: float): float =
       let xm = x - d.mean
       dnorm / exp(vnorm * xm * xm),
     cdf: proc (x: float): float =
@@ -189,4 +194,28 @@ converter NormalDistribution*(d: Normal): FloatDistribution =
     quantile: proc (x: float): float =
       checkNormal(x)
       d.mean + (r2v * erfinv((2.0 * x) - 1.0))
+  )
+
+converter ExponentialDistribution*(d: Exponential): FloatDistribution =
+  let binv = 1.0 / d.beta
+  FloatDistribution(
+    pdf: proc (x: float): float =
+      if x > 0.0:
+        result = binv * exp(-x * binv),
+    cdf: proc (x: float): float =
+      if x > 0.0:
+        result = 1.0 - exp(-x * binv),
+    quantile: proc (x: float): float =
+      checkNormal(x)
+      -ln(1.0 - x) * d.beta
+  )
+
+converter GammaDistribution*(d: Gamma): FloatDistribution =
+  let srinv = 1.0 / (pow(d.beta, d.alpha) * tgamma(d.alpha))
+  let aprev = d.alpha - 1.0
+  let binv = 1.0 / d.beta
+  FloatDistribution(
+    pdf: proc (x: float): float =
+      if x > 0.0:
+        result = srinv * pow(x, aprev) * exp(-x * binv)
   )
