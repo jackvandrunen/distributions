@@ -128,6 +128,7 @@ converter BinomialDistribution*(d: Binomial): IntDistribution =
       if x >= 0:
         result = float(binom(d.n, x)) * pow(d.p, float(x)) * pow(q, float(d.n - x)),
     cdf: proc (x: int): float =
+      # TODO: non-iterative approximation?
       for i in 0..x:
         result += float(binom(d.n, i)) * pow(d.p, float(i)) * pow(q, float(d.n - i))
   )
@@ -158,6 +159,7 @@ converter PoissonDistribution*(d: Poisson): IntDistribution =
       if x >= 0:
         result = pow(d.lambda, float(x)) * nlambda / float(fac(x)),
     cdf: proc (x: int): float =
+      # TODO: non-iterative approximation?
       for i in 0..x:
         result += pow(d.lambda, float(i)) / float(fac(i))
       result *= nlambda
@@ -211,11 +213,15 @@ converter ExponentialDistribution*(d: Exponential): FloatDistribution =
   )
 
 converter GammaDistribution*(d: Gamma): FloatDistribution =
-  let srinv = 1.0 / (pow(d.beta, d.alpha) * tgamma(d.alpha))
+  let ga = tgamma(d.alpha)
+  let srinv = 1.0 / (pow(d.beta, d.alpha) * ga)
   let aprev = d.alpha - 1.0
   let binv = 1.0 / d.beta
   FloatDistribution(
     pdf: proc (x: float): float =
       if x > 0.0:
-        result = srinv * pow(x, aprev) * exp(-x * binv)
+        result = srinv * pow(x, aprev) * exp(-x * binv),
+    cdf: proc (x: float): float =
+      if x > 0.0:
+        result = gammainc(d.alpha, x * binv) / ga
   )

@@ -221,3 +221,9 @@ suite "statistics-Gamma":
     check(approx(d.pdf(0.0), 0.0))
     check(approx(d.pdf(1.0), 0.303265))
     check(approx(d.pdf(5.0), 0.041043))
+
+  test "cdf":
+    check(approx(d.cdf(-1.0), 0.0))
+    check(approx(d.cdf(0.575364), 0.25))
+    check(approx(d.cdf(1.38629), 0.5))
+    check(approx(d.cdf(2.77259), 0.75))

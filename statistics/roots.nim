@@ -32,3 +32,17 @@ proc erfinv*(x: float): float =
     result =       1.00167406 + (result * w)
     result =       2.83297682 + (result * w)
   result = result * x
+
+proc gammainc*(s, z: float): float =
+  result = s + 10.0
+  result = s + 9.0 + ((5.0 * z) / result)
+  result = s + 8.0 - ((s + 4.0) * z / result)
+  result = s + 7.0 + ((4.0 * z) / result)
+  result = s + 6.0 - ((s + 3.0) * z / result)
+  result = s + 5.0 + ((3.0 * z) / result)
+  result = s + 4.0 - ((s + 2.0) * z / result)
+  result = s + 3.0 + ((2.0 * z) / result)
+  result = s + 2.0 - ((s + 1.0) * z / result)
+  result = s + 1.0 + (z / result)
+  result = s - (s * z / result)
+  result = pow(z, s) * exp(-z) / result
