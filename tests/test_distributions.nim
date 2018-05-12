@@ -227,3 +227,20 @@ suite "statistics-Gamma":
     check(approx(d.cdf(0.575364), 0.25))
     check(approx(d.cdf(1.38629), 0.5))
     check(approx(d.cdf(2.77259), 0.75))
+
+suite "statistics-Beta":
+  let d = Beta(alpha: 1.0, beta: 2.0)
+
+  test "pdf":
+    check(approx(d.pdf(-1.0), 0.0))
+    check(approx(d.pdf(0.0), 0.0))
+    check(approx(d.pdf(0.1), 1.8))
+    check(approx(d.pdf(0.5), 1.0))
+    check(approx(d.pdf(0.9), 0.2))
+  
+  test "cdf":
+    check(approx(d.cdf(-1.0), 0.0))
+    check(approx(d.cdf(0.0), 0.0))
+    check(approx(d.cdf(0.1), 0.19))
+    check(approx(d.cdf(0.5), 0.75))
+    check(approx(d.cdf(0.9), 0.99))

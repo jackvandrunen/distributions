@@ -35,6 +35,9 @@ type
   Gamma* = object
     alpha*: float
     beta*: float
+  Beta* = object
+    alpha*: float
+    beta*: float
 
 template checkNormal(x: float) =
   if not (0.0 < x and x < 1.0):
@@ -224,4 +227,19 @@ converter GammaDistribution*(d: Gamma): FloatDistribution =
     cdf: proc (x: float): float =
       if x > 0.0:
         result = gammainc(d.alpha, x * binv) / ga
+  )
+
+converter BetaDistribution*(d: Beta): FloatDistribution =
+  let aprev = d.alpha - 1.0
+  let bprev = d.beta - 1.0
+  let bab = 1.0 / beta(d.alpha, d.beta)
+  FloatDistribution(
+    pdf: proc (x: float): float =
+      if x > 0.0 and x < 1.0:
+        result = pow(x, aprev) * pow(1.0 - x, bprev) * bab,
+    cdf: proc (x: float): float =
+      if x > 0.0 and x < 1.0:
+        result = betaincreg(x, d.alpha, d.beta)
+      if x >= 1.0:
+        result = 1.0
   )

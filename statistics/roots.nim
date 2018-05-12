@@ -46,3 +46,25 @@ proc gammainc*(s, z: float): float =
   result = s + 1.0 + (z / result)
   result = s - (s * z / result)
   result = pow(z, s) * exp(-z) / result
+
+proc beta*(a, b: float): float =
+  exp(lgamma(a) + lgamma(b) - lgamma(a + b))
+
+proc betaincreg*(z, a, b: float): float =
+  proc r(k: int): float =
+    if k mod 2 == 1:
+      let kf = (float(k) - 1) / 2.0
+      let ap2k = a + (2.0 * kf)
+      -1.0 * (a + kf) * (a + b + kf) * z / (ap2k * (ap2k + 1))
+    else:
+      let kf = float(k) / 2.0
+      let ap2k = a + (2.0 * kf)
+      kf * (b - kf) * z / (ap2k * (ap2k - 1))
+  
+  result = 1.0
+  result = 1.0 + (r(5) / result)
+  result = 1.0 + (r(4) / result)
+  result = 1.0 + (r(3) / result)
+  result = 1.0 + (r(2) / result)
+  result = 1.0 + (r(1) / result)
+  result = (pow(z, a) * pow(1.0 - z, b) / (a * beta(a, b))) / result
