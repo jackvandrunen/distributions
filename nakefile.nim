@@ -5,7 +5,7 @@ import os
 const
   UTIL = "tests/ut_utils.nim"
   CACHE = "tests/nimcache"
-  BuildFlags = "--verbosity:0 --hints:off"
+  BuildFlags = "--verbosity:0"
 
 const
   tests = @[

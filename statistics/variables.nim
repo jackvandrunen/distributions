@@ -1,21 +1,18 @@
 import ./distributions
 import ./random
 
-type FloatRandomVariable* = iterator(): float
-type IntRandomVariable* = iterator(): int
+proc random*(d: FloatDistribution, oracle: proc(): float = rand): float {.inline.} =
+  d.quantile(oracle())
 
-proc RandomVariable*(d: FloatDistribution, oracle: proc(): float): FloatRandomVariable =
-  (iterator(): float =
-    while true:
-      yield d.quantile(oracle()))
+proc random*(d: IntDistribution, oracle: proc(): float = rand): int {.inline.} =
+  d.quantile(oracle())
 
-proc RandomVariable*(d: FloatDistribution): FloatRandomVariable =
-  RandomVariable(d, rand)
+proc sample*(d: FloatDistribution, n: int, oracle: proc(): float = rand): seq[float] {.inline.} =
+  result = newSeq[float](n)
+  for i in 0..n-1:
+    result[i] = d.random(oracle)
 
-proc RandomVariable*(d: IntDistribution, oracle: proc(): float): IntRandomVariable =
-  (iterator(): int =
-    while true:
-      yield d.quantile(oracle()))
-
-proc RandomVariable*(d: IntDistribution): IntRandomVariable =
-  RandomVariable(d, rand)
+proc sample*(d: IntDistribution, n: int, oracle: proc(): float = rand): seq[int] {.inline.} =
+  result = newSeq[int](n)
+  for i in 0..n-1:
+    result[i] = d.random(oracle)

@@ -2,7 +2,7 @@ import ../statistics/random
 import ./ut_utils
 import unittest
 
-suite "statistics-rand":
+suite "statistics-random":
   var state = initRand(0)
 
   test "zero state":
