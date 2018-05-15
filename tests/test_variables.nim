@@ -1,5 +1,7 @@
 import ../statistics/variables
 import ../statistics/distributions
+import ../statistics/distributions/discrete
+import ../statistics/distributions/continuous
 import ./ut_utils
 import unittest
 

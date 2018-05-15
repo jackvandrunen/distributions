@@ -15,18 +15,29 @@ const
       UTIL
     ],
     @[
-      "tests/test_distributions.nim",
+      "tests/test_discrete_distributions.nim",
       "statistics/distributions.nim",
+      "statistics/distributions/discrete.nim",
         "statistics/roots.nim",
+      UTIL
+    ],
+    @[
+      "tests/test_continuous_distributions.nim",
+      "statistics/distributions.nim",
+      "statistics/distributions/continuous.nim",
         "statistics/functions.nim",
+        "statistics/roots.nim",
       UTIL
     ],
     @[
       "tests/test_variables.nim",
       "statistics/variables.nim",
         "statistics/distributions.nim",
+        "statistics/distributions/discrete.nim",
           "statistics/roots.nim",
+        "statistics/distributions/continuous.nim",
           "statistics/functions.nim",
+          "statistics/roots.nim",
         "statistics/random.nim",
       UTIL
     ]
