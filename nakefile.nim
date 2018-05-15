@@ -17,14 +17,17 @@ const
     @[
       "tests/test_distributions.nim",
       "statistics/distributions.nim",
-      "statistics/roots.nim",
+        "statistics/roots.nim",
+        "statistics/functions.nim",
       UTIL
     ],
     @[
       "tests/test_variables.nim",
       "statistics/variables.nim",
-      "statistics/distributions.nim",
-      "statistics/random.nim",
+        "statistics/distributions.nim",
+          "statistics/roots.nim",
+          "statistics/functions.nim",
+        "statistics/random.nim",
       UTIL
     ]
   ]

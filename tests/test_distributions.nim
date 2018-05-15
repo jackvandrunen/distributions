@@ -228,6 +228,12 @@ suite "statistics-Gamma":
     check(approx(d.cdf(1.38629), 0.5))
     check(approx(d.cdf(2.77259), 0.75))
 
+  test "quantile":
+    checkQuantileBounds(d)
+    check(approx(d.quantile(0.25), 0.575364))
+    check(approx(d.quantile(0.5), 1.38629))
+    check(approx(d.quantile(0.75), 2.77259))
+
 suite "statistics-Beta":
   let d = Beta(alpha: 1.0, beta: 2.0)
 
@@ -244,3 +250,9 @@ suite "statistics-Beta":
     check(approx(d.cdf(0.1), 0.19))
     check(approx(d.cdf(0.5), 0.75))
     check(approx(d.cdf(0.9), 0.99))
+
+  test "quantile":
+    checkQuantileBounds(d)
+    check(approx(d.quantile(0.19), 0.1))
+    check(approx(d.quantile(0.75), 0.5))
+    check(approx(d.quantile(0.99), 0.9))

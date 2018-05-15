@@ -1,4 +1,5 @@
 import ./roots
+import ./functions
 import math
 
 type
@@ -38,6 +39,8 @@ type
   Beta* = object
     alpha*: float
     beta*: float
+  Students* = object
+    nu*: float
 
 template checkNormal(x: float) =
   if not (0.0 < x and x < 1.0):
@@ -220,7 +223,7 @@ converter GammaDistribution*(d: Gamma): FloatDistribution =
   let srinv = 1.0 / (pow(d.beta, d.alpha) * ga)
   let aprev = d.alpha - 1.0
   let binv = 1.0 / d.beta
-  FloatDistribution(
+  result = FloatDistribution(
     pdf: proc (x: float): float =
       if x > 0.0:
         result = srinv * pow(x, aprev) * exp(-x * binv),
@@ -228,12 +231,16 @@ converter GammaDistribution*(d: Gamma): FloatDistribution =
       if x > 0.0:
         result = gammainc(d.alpha, x * binv) / ga
   )
+  let dist = addr result
+  result.quantile = proc (x: float): float =
+    checkNormal(x)
+    findRoot(dist[].cdf, x, 1.0)
 
 converter BetaDistribution*(d: Beta): FloatDistribution =
   let aprev = d.alpha - 1.0
   let bprev = d.beta - 1.0
   let bab = 1.0 / beta(d.alpha, d.beta)
-  FloatDistribution(
+  result = FloatDistribution(
     pdf: proc (x: float): float =
       if x > 0.0 and x < 1.0:
         result = pow(x, aprev) * pow(1.0 - x, bprev) * bab,
@@ -243,3 +250,10 @@ converter BetaDistribution*(d: Beta): FloatDistribution =
       if x >= 1.0:
         result = 1.0
   )
+  let dist = addr result
+  result.quantile = proc (x: float): float =
+    checkNormal(x)
+    findRoot(dist[].cdf, x, 0.5)
+
+converter StudentsDistribution*(d: Students): FloatDistribution =
+  discard
