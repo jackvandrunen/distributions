@@ -3,8 +3,6 @@ import ../roots
 import math
 
 type
-  PointMass* = object
-    a*: int
   DiscreteUniform* = object
     k*: int
   Bernoulli* = object
@@ -16,18 +14,6 @@ type
     p*: float
   Poisson* = object
     lambda*: float
-
-converter PointMassDistribution*(d: PointMass): IntDistribution =
-  IntDistribution(
-    pmf: proc (x: int): float =
-      if x == d.a:
-        result = 1.0,
-    cdf: proc (x: int): float =
-      if x >= d.a:
-        result = 1.0,
-    quantile: proc (x: float): int =
-      d.a
-  )
 
 converter DiscreteUniformDistribution*(d: DiscreteUniform): IntDistribution =
   let kf = float(d.k)
