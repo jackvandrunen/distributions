@@ -101,4 +101,12 @@ converter StudentsDistribution*(d: Students): FloatDistribution =
   discard
 
 converter CauchyDistribution*(d: Cauchy): FloatDistribution =
-  discard
+  let pinv = 1.0 / PI
+  FloatDistribution(
+    pdf: proc (x: float): float =
+      1.0 / (PI * (1.0 + (x * x))),
+    cdf: proc (x: float): float =
+      (pinv * arctan(x)) + 0.5,
+    quantile: proc (x: float): float =
+      tan((x - 0.5) * PI)
+  )

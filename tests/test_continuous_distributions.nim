@@ -121,3 +121,22 @@ suite "statistics-Beta":
     check(approx(d.quantile(0.19), 0.1))
     check(approx(d.quantile(0.75), 0.5))
     check(approx(d.quantile(0.99), 0.9))
+
+suite "statistics-Cauchy":
+  let d = Cauchy()
+
+  test "pdf":
+    check(approx(d.pdf(-1.0), 0.159155))
+    check(approx(d.pdf(0.0), 0.31831))
+    check(approx(d.pdf(1.0), 0.159155))
+
+  test "cdf":
+    check(approx(d.cdf(-1.0), 0.25))
+    check(approx(d.cdf(0.0), 0.5))
+    check(approx(d.cdf(1.0), 0.75))
+
+  test "quantile":
+    checkQuantileBounds(d)
+    check(approx(d.quantile(0.25), -1.0))
+    check(approx(d.quantile(0.5), 0.0))
+    check(approx(d.quantile(0.75), 1.0))
