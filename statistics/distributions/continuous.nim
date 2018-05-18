@@ -18,7 +18,7 @@ type
   Beta* = object
     alpha*: float
     beta*: float
-  Students* = object
+  StudentT* = object
     nu*: float
   Cauchy* = object
 
@@ -97,8 +97,22 @@ converter BetaDistribution*(d: Beta): FloatDistribution =
   result.quantile = proc (x: float): float =
     findRoot(dist[].cdf, x, 0.5)
 
-converter StudentsDistribution*(d: Students): FloatDistribution =
-  discard
+converter StudentTDistribution*(d: StudentT): FloatDistribution =
+  let a = -0.5 * (d.nu + 1.0)
+  let c = 0.5 * d.nu
+  let b = 1.0 / (sqrt(d.nu) * beta(0.5, c))
+  result = FloatDistribution(
+    pdf: proc (x: float): float =
+      b * pow(1.0 + ((x * x) / d.nu), a),
+    cdf: proc (x: float): float =
+      let x2 = x * x
+      result = 0.5 * (betaincreg(x2 / (x2 + d.nu), 0.5, c) + 1.0)
+      if x < 0.0:
+        result = 1.0 - result
+  )
+  let dist = addr result
+  result.quantile = proc (x: float): float =
+    findRoot(dist[].cdf, x, 0.0)
 
 converter CauchyDistribution*(d: Cauchy): FloatDistribution =
   let pinv = 1.0 / PI
