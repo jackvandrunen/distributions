@@ -1,9 +1,9 @@
-import ../statistics/random
+import ../statistics/oracle
 import ./ut_utils
 import unittest
 
-suite "statistics-random":
-  var state = initRand(0)
+suite "statistics-oracle":
+  var state = initOracle(0)
 
   test "zero state":
     check(approx(state.rand(), 0.60126))

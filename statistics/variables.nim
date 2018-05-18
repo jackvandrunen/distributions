@@ -1,5 +1,5 @@
 import ./distributions
-import ./random
+import ./oracle
 
 proc random*(d: FloatDistribution, oracle: proc(): float = rand): float {.inline.} =
   d.quantile(oracle())

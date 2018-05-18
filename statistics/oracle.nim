@@ -1,10 +1,10 @@
 import times
 
 type
-  Rand = object
+  Oracle = object
     s: array[0..3, uint64]
 var
-  defaultState: Rand
+  defaultState: Oracle
 
 proc rotl(x: uint64, k: int): uint64 {.inline.} =
   (x shl k) or (x shr (64 - k))
@@ -23,7 +23,7 @@ proc splitmix64(x: var uint64): uint64 =
   z = (z xor (z shr 27)) * 0x94d049bb133111ebu64
   z xor (z shr 31)
 
-proc rand*(state: var Rand): float =
+proc rand*(state: var Oracle): float =
   let t = state.s[1] shl 17
   result = normalize(rotl(state.s[1] * 5, 7) * 9)
   state.s[2] ^= state.s[0];
@@ -36,16 +36,16 @@ proc rand*(state: var Rand): float =
 proc rand*(): float =
   rand(defaultState)
 
-proc initRand*(seed: uint64): Rand =
+proc initOracle*(seed: uint64): Oracle =
   var x = seed
-  Rand(s: [
+  Oracle(s: [
     splitmix64(x),
     splitmix64(x),
     splitmix64(x),
     splitmix64(x)
   ])
 
-proc initRand*(): Rand =
-  initRand(cast[uint64](epochTime()))
+proc initOracle*(): Oracle =
+  initOracle(cast[uint64](epochTime()))
 
-defaultState = initRand()
+defaultState = initOracle()
