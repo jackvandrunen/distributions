@@ -21,6 +21,8 @@ type
   StudentT* = object
     nu*: float
   Cauchy* = object
+  ChiSquared* = object
+    p*: int
 
 converter UniformDistribution*(d: Uniform): FloatDistribution =
   let r = d.b - d.a
@@ -124,3 +126,20 @@ converter CauchyDistribution*(d: Cauchy): FloatDistribution =
     quantile: proc (x: float): float =
       tan((x - 0.5) * PI)
   )
+
+converter ChiSquaredDistribution*(d: ChiSquared): FloatDistribution =
+  let pf = float(d.p)
+  let a = 0.5 * pf
+  let b = 1.0 / tgamma(a)
+  let c = b * 1.0 / pow(2.0, a)
+  result = FloatDistribution(
+    pdf: proc (x: float): float =
+      if x > 0.0:
+        result = c * pow(x, a - 1.0) * exp(-0.5 * x),
+    cdf: proc (x: float): float =
+      if x > 0.0:
+        result = b * gammainc(a, 0.5 * x)
+  )
+  let dist = addr result
+  result.quantile = proc (x: float): float =
+    findRoot(dist[].cdf, x, pf)

@@ -159,3 +159,24 @@ suite "statistics-Cauchy":
     check(approx(d.quantile(0.25), -1.0))
     check(approx(d.quantile(0.5), 0.0))
     check(approx(d.quantile(0.75), 1.0))
+
+suite "statistics-ChiSquared":
+  let d = ChiSquared(p: 3)
+
+  test "pdf":
+    check(approx(d.pdf(-1.0), 0.0))
+    check(approx(d.pdf(0.5), 0.219696))
+    check(approx(d.pdf(1.0), 0.241971))
+    check(approx(d.pdf(3.0), 0.15418))
+
+  test "cdf":
+    check(approx(d.cdf(-1.0), 0.0))
+    check(approx(d.cdf(0.5), 0.0811086))
+    check(approx(d.cdf(1.0), 0.198748))
+    check(approx(d.cdf(3.0), 0.608375))
+
+  test "quantile":
+    checkQuantileBounds(d)
+    check(approx(d.quantile(0.0811086), 0.5))
+    check(approx(d.quantile(0.198748), 1.0))
+    check(approx(d.quantile(0.608375), 3.0))
