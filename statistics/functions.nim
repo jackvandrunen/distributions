@@ -69,7 +69,7 @@ proc erfinv*(x: float): float =
     result =       4.8499064014085844221 + result * w
   return result * x
 
-proc gammainc*(s, z: float): float =
+proc lgammainc*(s, z: float): float =
   result = s + 12.0
   result = s + 11.0 + ((6.0 * z) / result)
   result = s + 10.0 - ((s + 5.0) * z / result)
@@ -83,7 +83,7 @@ proc gammainc*(s, z: float): float =
   result = s + 2.0 - ((s + 1.0) * z / result)
   result = s + 1.0 + (z / result)
   result = s - (s * z / result)
-  result = pow(z, s) * exp(-z) / result
+  result = -ln(result) + (s * ln(z)) - z
 
 proc beta*(a, b: float): float =
   exp(lgamma(a) + lgamma(b) - lgamma(a + b))

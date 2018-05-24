@@ -1,13 +1,12 @@
 import ../statistics/variables
-import ../statistics/distributions
-import ../statistics/distributions/discrete
-import ../statistics/distributions/continuous
+import ../statistics/distributions/DiscreteUniform
+import ../statistics/distributions/Uniform
 import ./ut_utils
 import unittest
 
 suite "statistics-variables":
-  let fd = Uniform(a: 0.0, b: 5.0)
-  let id = DiscreteUniform(k: 5)
+  let fd = Uniform(0.0, 5.0)
+  let id = DiscreteUniform(5)
   proc testOracle(): float =
     0.5
 

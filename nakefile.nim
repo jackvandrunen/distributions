@@ -6,7 +6,7 @@ import sequtils
 const
   TESTS = "tests"
   EXCLUDES = @["ut_utils.nim"]
-  CACHE = "tests/nimcache"
+  CACHES = @["tests/nimcache", "tests/distributions/nimcache"]
   BuildFlags = "--verbosity:0 --hints:off"
 
 proc buildAll(): seq[string] =
@@ -18,6 +18,11 @@ proc buildAll(): seq[string] =
       direShell(nimExe, "c", BuildFlags, target)
       result.add(target)
 
+proc getTests(): seq[string] =
+  result = newSeq[string]()
+  for testFiles in findTests(TESTS, EXCLUDES):
+    result.add(testFiles[0][0..^5])
+
 proc runTests(testsToRun: openarray[string]) =
   putEnv("NIMTEST_OUTPUT_LVL", "PRINT_FAILURES")
   for target in testsToRun:
@@ -28,17 +33,15 @@ proc clean() =
     let target = testFiles[0][0..^5]
     echo fmt"Removing {target}..."
     removeFile(target)
-  echo fmt"Removing {CACHE}..."
-  removeDir(CACHE)
+  for cache in CACHES:
+    echo fmt"Removing {cache}..."
+    removeDir(cache)
 
 task "test", "Run unit tests on all newly modified files":
-  let testsToRun = buildAll()
+  discard buildAll()
+  let testsToRun = getTests()
   runTests(testsToRun)
-  echo "\pAll tests updated!"
-
-task "retest", "Run all unit tests":
-  runTask("clean")
-  runTask("test")
+  echo "\pAll tests passed!"
 
 task "clean", "Delete all test binaries and cache":
   clean()
