@@ -6,7 +6,8 @@ var defaultState: Oracle
 
 when not defined(nimscript):
   import times
-  defaultState = initARC4(cast[array[0..7, uint8]](epochTime()))
+  let seed = uint64(epochTime() * 1_000_000_000)
+  defaultState = initARC4(cast[array[0..7, uint8]](seed))
   for b in generate(defaultState, Discard):
     discard
 else:
