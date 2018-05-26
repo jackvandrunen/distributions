@@ -2,7 +2,7 @@ import ../distributions
 import ../private/tables2
 
 type
-  TEmpirical*[T] = object
+  TEmpirical*[T: SomeNumber] = object
     s: OrderedCountTable[T]
 
 proc Empirical*[T](s: openarray[T]): TEmpirical[T] =
