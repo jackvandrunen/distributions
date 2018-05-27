@@ -1,6 +1,8 @@
 import ../distributions
 include ./utils
 
+export distributions
+
 type
   TPointMass*[T: SomeNumber] = object
     a*: T

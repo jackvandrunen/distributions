@@ -4,6 +4,8 @@ import ../roots
 import math
 include ./utils
 
+export distributions
+
 type
   TStudentT* = object
     nu*: float

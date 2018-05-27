@@ -3,6 +3,8 @@ import ../roots
 import math
 include ./utils
 
+export distributions
+
 type
   TGeometric* = object
     p*: float

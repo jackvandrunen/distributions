@@ -2,6 +2,8 @@ import ../distributions
 import math
 include ./utils
 
+export distributions
+
 type
   TCauchy* = object
 

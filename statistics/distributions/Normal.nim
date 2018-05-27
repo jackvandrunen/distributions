@@ -3,6 +3,8 @@ import ../functions
 import math
 include ./utils
 
+export distributions
+
 type
   TNormal* = object
     mu*: float

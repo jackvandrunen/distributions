@@ -3,6 +3,8 @@ import ../private/tables2
 import math
 include ./utils
 
+export distributions
+
 type
   TEmpirical*[T: SomeNumber] = object
     s: OrderedCountTable[T]
