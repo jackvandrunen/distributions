@@ -28,6 +28,12 @@ suite "statistics-Exponential":
     check(approx(d.quantile(0.5), 1.38629))
     check(approx(d.quantile(0.75), 2.77259))
 
+  test "expectation":
+    check(approx(d.median, d.quantile(0.5)))
+    check(approx(d.mean, 2.0))
+    check(approx(d.variance, 4.0))
+    check(approx(d.std, 2.0))
+
   test "pdf-i":
     check(approx(d2.pdf(-1.0), 0.0))
     check(approx(d2.pdf(0.0), 0.0))

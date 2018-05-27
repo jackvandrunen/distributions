@@ -31,6 +31,12 @@ suite "statistics-Poisson":
     check(d.quantile(0.62883) == 4)
     check(d.quantile(0.99715) == 10)
 
+  test "expectation":
+    check(d.median == d.quantile(0.5))
+    check(approx(d.mean, 4.0))
+    check(approx(d.variance, 4.0))
+    check(approx(d.std, 2.0))
+
   test "pmf-i":
     check(approx(d2.pdf(-1), 0.0))
     check(approx(d2.pdf(0), 0.01832))

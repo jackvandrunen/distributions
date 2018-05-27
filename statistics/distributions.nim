@@ -1,10 +1,22 @@
+import math
+
 type
+  Distribution*[T] = concept d
+    d.pdf(T) is float
+    d.cdf(T) is float
+    d.quantile(float) is T
+    d.mean() is float
+    d.variance() is float
   IDistribution*[T: SomeNumber] = tuple[
     pdf: proc(x: T): float,
     cdf: proc(x: T): float,
-    quantile: proc(q: float): T
+    quantile: proc(q: float): T,
+    mean: proc(): float,
+    variance: proc(): float
   ]
 
-template checkNormal*(x: float) =
-  if not (0.0 < x and x < 1.0):
-    raise newException(ValueError, "Quantile function is defined on (0,1)")
+proc median*[T](d: Distribution[T]): T =
+  d.quantile(0.5)
+
+proc std*[T](d: Distribution[T]): float =
+  sqrt(d.variance())

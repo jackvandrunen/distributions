@@ -31,6 +31,12 @@ suite "statistics-Binomial":
     check(d.quantile(0.51) == 3)
     check(d.quantile(0.97) == 6)
 
+  test "expectation":
+    check(d.median == d.quantile(0.5))
+    check(approx(d.mean, 3.5))
+    check(approx(d.variance, 2.275))
+    check(approx(d.std, 1.50831))
+
   test "pmf-i":
     check(approx(d2.pdf(-1), 0.0))
     check(approx(d2.pdf(0), 0.01346))

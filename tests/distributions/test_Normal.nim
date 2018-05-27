@@ -32,6 +32,12 @@ suite "statistics-Normal":
     check(approx(d.quantile(0.864334), 1.1))
     check(approx(d.quantile(0.999663), 3.4))
 
+  test "expectation":
+    check(approx(d.median, d.quantile(0.5)))
+    check(approx(d.mean, 0.0))
+    check(approx(d.variance, 1.0))
+    check(approx(d.std, 1.0))
+
   test "pdf-i":
     check(approx(d2.pdf(-3.4), 0.00123))
     check(approx(d2.pdf(-1.1), 0.21785))

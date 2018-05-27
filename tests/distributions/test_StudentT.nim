@@ -26,6 +26,15 @@ suite "statistics-StudentT":
     check(approx(d.quantile(0.5), 0.0))
     check(approx(d.quantile(0.75), 1.0))
 
+  test "expectation":
+    check(approx(d.median, d.quantile(0.5)))
+    expect(ValueError):
+      discard d.mean()
+    expect(ValueError):
+      discard d.variance()
+    expect(ValueError):
+      discard d.std()
+
   test "pdf-i":
     check(approx(d2.pdf(-1.0), 0.159155))
     check(approx(d2.pdf(0.0), 0.31831))

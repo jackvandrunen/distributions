@@ -1,12 +1,14 @@
 import ../distributions
+include ./utils
 
 type
   TBernoulli* = object
     p*: float
     q: float
+    v: float
 
 proc Bernoulli*(p: float): TBernoulli =
-  TBernoulli(p: p, q: 1.0 - p)
+  TBernoulli(p: p, q: 1.0 - p, v: p * (1.0 - p))
 
 proc pmf*(d: TBernoulli, x: int): float =
   if x == 0:
@@ -24,9 +26,17 @@ proc quantile*(d: TBernoulli, q: float): int =
   if q < d.q: 0
   else: 1
 
+proc mean*(d: TBernoulli): float =
+  d.p
+
+proc variance*(d: TBernoulli): float =
+  d.v
+
 converter toDistribution*(d: TBernoulli): IDistribution[int] =
   (
     pdf: proc(x: int): float = pmf(d, x),
     cdf: proc(x: int): float = cdf(d, x),
-    quantile: proc(q: float): int = quantile(d, q)
+    quantile: proc(q: float): int = quantile(d, q),
+    mean: proc(): float = mean(d),
+    variance: proc(): float = variance(d)
   )

@@ -25,6 +25,12 @@ suite "statistics-PointMass":
     check(d.quantile(0.1) == 12)
     check(d.quantile(0.5) == 12)
     check(d.quantile(0.9) == 12)
+  
+  test "expectation":
+    check(d.median == d.quantile(0.5))
+    check(approx(d.mean, 12.0))
+    check(approx(d.variance, 0.0))
+    check(approx(d.std, 0.0))
 
   test "pmf-i":
     check(approx(d2.pdf(9), 0.0))

@@ -1,4 +1,5 @@
 import ../distributions
+include ./utils
 
 type
   TPointMass*[T: SomeNumber] = object
@@ -19,9 +20,17 @@ proc quantile*[T](d: TPointMass[T], q: float): T =
   checkNormal(q)
   d.a
 
+proc mean*[T](d: TPointMass[T]): float =
+  float(d.a)
+
+proc variance*[T](d: TPointMass[T]): float =
+  0.0
+
 converter toDistribution*[T](d: TPointMass[T]): IDistribution[T] =
   (
     pdf: proc(x: T): float = pmf(d, x),
     cdf: proc(x: T): float = cdf(d, x),
-    quantile: proc(q: float): T = quantile(d, q)
+    quantile: proc(q: float): T = quantile(d, q),
+    mean: proc(): float = mean(d),
+    variance: proc(): float = variance(d)
   )

@@ -29,6 +29,12 @@ suite "statistics-Bernoulli":
     check(d.quantile(0.31) == 1)
     check(d.quantile(0.7) == 1)
 
+  test "expectation":
+    check(d.median == d.quantile(0.5))
+    check(approx(d.mean, 0.7))
+    check(approx(d.variance, 0.21))
+    check(approx(d.std, 0.458258))
+
   test "pmf-i":
     check(approx(d2.pdf(-1), 0.0))
     check(approx(d2.pdf(0), 0.3))

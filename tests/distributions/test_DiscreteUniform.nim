@@ -28,6 +28,12 @@ suite "statistics-DiscreteUniform":
     check(d.quantile(0.7) == 8)
     check(d.quantile(0.75) == 8)
     check(d.quantile(0.9) == 10)
+  
+  test "expectation":
+    check(d.median == d.quantile(0.5))
+    check(approx(d.mean, 5.5))
+    check(approx(d.variance, 6.75))
+    check(approx(d.std, 2.59808))
 
   test "pmf-i":
     check(approx(d2.pdf(-5), 0.0))

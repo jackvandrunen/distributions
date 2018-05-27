@@ -28,6 +28,12 @@ suite "statistics-ChiSquared":
     check(approx(d.quantile(0.198748), 1.0))
     check(approx(d.quantile(0.608375), 3.0))
 
+  test "expectation":
+    check(approx(d.median, d.quantile(0.5)))
+    check(approx(d.mean, 3.0))
+    check(approx(d.variance, 6.0))
+    check(approx(d.std, 2.44949))
+
   test "pdf-i":
     check(approx(d2.pdf(-1.0), 0.0))
     check(approx(d2.pdf(0.5), 0.219696))

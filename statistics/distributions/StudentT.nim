@@ -2,6 +2,7 @@ import ../distributions
 import ../functions
 import ../roots
 import math
+include ./utils
 
 type
   TStudentT* = object
@@ -29,9 +30,23 @@ proc quantile*(d: TStudentT, q: float): float =
   checkNormal(q)
   findRoot(proc(x: float): float = d.cdf(x), q, 0.0)
 
+proc mean*(d: TStudentT): float =
+  if d.nu > 1.0:
+    0.0
+  else:
+    raise newException(ValueError, "mean not defined for nu <= 1")
+
+proc variance*(d: TStudentT): float =
+  if d.nu > 2.0:
+    d.nu / (d.nu - 2.0)
+  else:
+    raise newException(ValueError, "variance not defined for nu <= 2")
+
 converter toDistribution*(d: TStudentT): IDistribution[float] =
   (
     pdf: proc(x: float): float = pdf(d, x),
     cdf: proc(x: float): float = cdf(d, x),
-    quantile: proc(q: float): float = quantile(d, q)
+    quantile: proc(q: float): float = quantile(d, q),
+    mean: proc(): float = mean(d),
+    variance: proc(): float = variance(d)
   )

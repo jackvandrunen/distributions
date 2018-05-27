@@ -29,6 +29,12 @@ suite "statistics-Empirical":
     check(d.quantile((7.0 / 12.0) + 0.0001) == 3)
     check(d.quantile(0.99) == 6)
 
+  test "expectation":
+    check(d.median == d.quantile(0.5))
+    check(approx(d.mean, 2.75))
+    check(approx(d.variance, 2.386364))
+    check(approx(d.std, 1.544786))
+
   test "pmf-i":
     check(approx(d2.pdf(0), 0.0))
     check(approx(d2.pdf(2), 5.0 / 12.0))

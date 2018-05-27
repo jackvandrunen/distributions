@@ -1,6 +1,7 @@
 import ../distributions
 import ../roots
 import math
+include ./utils
 
 type
   TPoisson* = object
@@ -23,9 +24,17 @@ proc quantile*(d: TPoisson, q: float): int =
   checkNormal(q)
   discreteInf(proc(x: int): float = d.cdf(x), q, 0)
 
+proc mean*(d: TPoisson): float =
+  d.lambda
+
+proc variance*(d: TPoisson): float =
+  d.lambda
+
 converter toDistribution*(d: TPoisson): IDistribution[int] =
   (
     pdf: proc(x: int): float = pmf(d, x),
     cdf: proc(x: int): float = cdf(d, x),
-    quantile: proc(q: float): int = quantile(d, q)
+    quantile: proc(q: float): int = quantile(d, q),
+    mean: proc(): float = mean(d),
+    variance: proc(): float = variance(d)
   )

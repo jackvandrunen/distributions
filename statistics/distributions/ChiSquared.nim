@@ -2,6 +2,7 @@ import ../distributions
 import ../functions
 import ../roots
 import math
+include ./utils
 
 type
   TChiSquared* = object
@@ -31,9 +32,17 @@ proc quantile*(d: TChiSquared, q: float): float =
   checkNormal(q)
   findRoot(proc(x: float): float = d.cdf(x), q, d.pf)
 
+proc mean*(d: TChiSquared): float =
+  d.pf
+
+proc variance*(d: TChiSquared): float =
+  2.0 * d.pf
+
 converter toDistribution*(d: TChiSquared): IDistribution[float] =
   (
     pdf: proc(x: float): float = pdf(d, x),
     cdf: proc(x: float): float = cdf(d, x),
-    quantile: proc(q: float): float = quantile(d, q)
+    quantile: proc(q: float): float = quantile(d, q),
+    mean: proc(): float = mean(d),
+    variance: proc(): float = variance(d)
   )
