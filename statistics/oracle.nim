@@ -16,7 +16,7 @@ else:
 proc rand*(): float =
   var bytes: array[0..7, uint8]
   var number: uint64
-  var i = 1
+  var i = 0
   for b in generate(defaultState, 7):
     bytes[i] = b
     inc i
