@@ -11,7 +11,7 @@ type
     m: float
     v: float
 
-proc Empirical*[T](s: openarray[T]): EmpiricalDistribution[T] =
+converter Empirical*[T](s: openarray[T]): EmpiricalDistribution[T] =
   var
     oct = initOrderedCountTable(s)
     m: float
@@ -23,6 +23,9 @@ proc Empirical*[T](s: openarray[T]): EmpiricalDistribution[T] =
     v += pow(float(i.k) - m, 2.0) * float(i.v)
   v = v / float(s.len - 1)
   EmpiricalDistribution[T](s: oct, m: m, v: v)
+
+converter Empirical*[T](s: seq[T]): EmpiricalDistribution[T] =
+  Empirical(openarray(s))
 
 method pmf*[T](d: EmpiricalDistribution[T], x: T): float =
   float(d.s.getOrDefault(x)) / float(d.s.counter)

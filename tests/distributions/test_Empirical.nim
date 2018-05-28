@@ -3,7 +3,11 @@ import ../ut_utils
 import unittest
 
 suite "statistics-Empirical":
-  let d = Empirical[int](@[1, 2, 3, 2, 4, 2, 2, 3, 1, 6, 5, 2])
+  let s = @[1, 2, 3, 2, 4, 2, 2, 3, 1, 6, 5, 2]
+  let d = Empirical(s)
+
+  test "converter":
+    check(approx(s.variance, d.variance))
 
   test "pmf":
     check(approx(d.pmf(0), 0.0))
