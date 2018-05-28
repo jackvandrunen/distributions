@@ -1,22 +1,29 @@
 import math
+import typetraits
 
 type
-  Distribution*[T] = concept d
-    d.pdf(T) is float
-    d.cdf(T) is float
-    d.quantile(float) is T
-    d.mean() is float
-    d.variance() is float
-  IDistribution*[T: SomeNumber] = tuple[
-    pdf: proc(x: T): float,
-    cdf: proc(x: T): float,
-    quantile: proc(q: float): T,
-    mean: proc(): float,
-    variance: proc(): float
-  ]
+  Distribution*[T: SomeNumber] = ref object {.inheritable.}
 
-proc median*[T](d: Distribution[T]): T =
+method pmf*[T](d: Distribution[T], x: T): float {.base.} =
+  raise newException(ValueError, d.type.name & ".pmf")
+
+method pdf*[T](d: Distribution[T], x: T): float {.base.} =
+  raise newException(ValueError, d.type.name & ".pdf")
+
+method cdf*[T](d: Distribution[T], x: T): float {.base.} =
+  raise newException(ValueError, d.type.name & ".cdf")
+
+method quantile*[T](d: Distribution[T], q: float): T {.base.} =
+  raise newException(ValueError, d.type.name & ".quantile")
+
+method mean*[T](d: Distribution[T]): float {.base.} =
+  raise newException(ValueError, d.type.name & ".mean")
+
+method variance*[T](d: Distribution[T]): float {.base.} =
+  raise newException(ValueError, d.type.name & ".variance")
+
+method median*[T](d: Distribution[T]): T {.base.} =
   d.quantile(0.5)
 
-proc std*[T](d: Distribution[T]): float =
-  sqrt(d.variance())
+method std*[T](d: Distribution[T]): float {.base.} =
+  sqrt(d.variance)

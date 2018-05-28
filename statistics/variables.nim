@@ -1,9 +1,9 @@
 import ./distributions
 
-proc random*[T](d: IDistribution[T], oracle: proc(): float): T =
+proc random*[T](d: Distribution[T], oracle: proc(): float): T =
   d.quantile(oracle())
 
-proc sample*[T](d: IDistribution[T], n: int, oracle: proc(): float): seq[T] =
+proc sample*[T](d: Distribution[T], n: int, oracle: proc(): float): seq[T] =
   result = newSeq[T](n)
   for i in 0..n-1:
     result[i] = d.random(oracle)
@@ -11,8 +11,8 @@ proc sample*[T](d: IDistribution[T], n: int, oracle: proc(): float): seq[T] =
 when not defined(nimscript):
   import ./oracle
 
-  proc random*[T](d: IDistribution[T]): T =
+  proc random*[T](d: Distribution[T]): T =
     d.random(rand)
 
-  proc sample*[T](d: IDistribution[T]): seq[T] =
+  proc sample*[T](d: Distribution[T]): seq[T] =
     d.sample(rand)
