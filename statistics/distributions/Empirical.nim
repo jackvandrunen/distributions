@@ -1,5 +1,5 @@
 import ../distributions
-import ../private/structures
+import ../private/tables2
 import math
 include ./utils
 
