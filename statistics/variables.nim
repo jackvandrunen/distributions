@@ -1,12 +1,15 @@
 import ./distributions
+import sequtils
 
 proc random*[T](d: Distribution[T], oracle: proc(): float): T =
   d.quantile(oracle())
 
+iterator draw*[T](d: Distribution[T], n: int, oracle: proc(): float): T =
+  for i in 1..n:
+    yield d.random(oracle)
+
 proc sample*[T](d: Distribution[T], n: int, oracle: proc(): float): seq[T] =
-  result = newSeq[T](n)
-  for i in 0..n-1:
-    result[i] = d.random(oracle)
+  toSeq(d.draw(n, oracle))
 
 when not defined(nimscript):
   import ./oracle
@@ -14,5 +17,9 @@ when not defined(nimscript):
   proc random*[T](d: Distribution[T]): T =
     d.random(rand)
 
-  proc sample*[T](d: Distribution[T]): seq[T] =
-    d.sample(rand)
+  iterator draw*[T](d: Distribution[T], n: int): T =
+    for i in 1..n:
+      yield d.random()
+
+  proc sample*[T](d: Distribution[T], n: int): seq[T] =
+    toSeq(d.draw(n))

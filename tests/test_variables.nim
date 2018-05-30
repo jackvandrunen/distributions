@@ -28,3 +28,4 @@ suite "statistics-variables":
       x = fd.random()
       y = fd.random()
     check(x != y)
+    check(fd.sample(5).len == 5)
