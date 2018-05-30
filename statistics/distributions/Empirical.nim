@@ -1,5 +1,5 @@
 import ../distributions
-import ../private/tables2
+import ../private/structures
 import math
 include ./utils
 
@@ -13,16 +13,16 @@ type
 
 converter Empirical*[T](s: openarray[T]): EmpiricalDistribution[T] =
   var
-    oct = initOrderedCountTable(s)
+    t = initOrderedCountTable(s)
     m: float
     v: float
-  for i in oct.items():
+  for i in t.items():
     m += float(i.k) * float(i.v)
   m = m / float(s.len)
-  for i in oct.items():
+  for i in t.items():
     v += pow(float(i.k) - m, 2.0) * float(i.v)
   v = v / float(s.len - 1)
-  EmpiricalDistribution[T](s: oct, m: m, v: v)
+  EmpiricalDistribution[T](s: t, m: m, v: v)
 
 converter Empirical*[T](s: seq[T]): EmpiricalDistribution[T] =
   Empirical(openarray(s))
