@@ -4,7 +4,9 @@ import unittest
 
 suite "statistics-Empirical":
   let s = @[1, 2, 3, 2, 4, 2, 2, 3, 1, 6, 5, 2]
+  let s2 = @[1, 2, 3, 3, 5, 4, 5, 4, 4, 5]
   let d = Empirical(s)
+  let d2 = Empirical(s2)
 
   test "converter":
     check(approx(s.variance, d.variance))
@@ -33,6 +35,8 @@ suite "statistics-Empirical":
 
   test "expectation":
     check(d.median == d.quantile(0.5))
+    check(d.mode == @[2])
+    check(d2.mode == @[4, 5])
     check(approx(d.mean, 2.75))
     check(approx(d.variance, 2.386364))
     check(approx(d.std, 1.544786))

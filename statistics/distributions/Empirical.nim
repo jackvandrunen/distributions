@@ -51,3 +51,13 @@ method mean*[T](d: EmpiricalDistribution[T]): float =
 
 method variance*[T](d: EmpiricalDistribution[T]): float =
   d.v
+
+method mode*[T](d: EmpiricalDistribution[T]): seq[T] =
+  var current = -1
+  for i in d.s.items():
+    if i.v > current:
+      result = newSeq[T]()
+      result.add(i.k)
+      current = i.v
+    elif i.v == current:
+      result.add(i.k)
