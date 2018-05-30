@@ -32,3 +32,4 @@ suite "statistics-OrderedCountTable":
       counter += i.v
     check(counter == 1_000_000)
     check(counter == bigTable.counter)
+    validate(bigTable)

@@ -1,11 +1,13 @@
 import lists
 
 type
+  Comparable* = concept x, y
+    (y < x) is bool
   OCTNode[T] = ref object
     red: bool
     value: tuple[k: T, v: int]
     left, right: OCTNode[T]
-  OrderedCountTable*[T] = object
+  OrderedCountTable*[T: Comparable] = object
     root: OCTNode[T]
     counter*: int
 
@@ -91,7 +93,7 @@ proc insertOrAdd[T](n: OCTNode[T], key: T, val: int): OCTNode[T] =
 proc find[T](n: OCTNode[T], k: T): OCTNode[T] =
   if isNil(n) or n.value.k == k:
     n
-  elif n.value.k > k:
+  elif k < n.value.k:
     find(n.left, k)
   else:
     find(n.right, k)
@@ -104,6 +106,27 @@ proc inc*[T](t: var OrderedCountTable[T], key: T, val = 1) =
 proc initOrderedCountTable*[T](keys: openarray[T]): OrderedCountTable[T] =
   for k in keys:
     result.inc(k)
+
+proc validate[T](n: OCTNode[T]): int =
+  if isNil(n):
+    return 1
+  assert(not (isRed(n) and (isRed(n.left) or isRed(n.right))), "Red violation")
+  let leftHeight = validate(n.left)
+  let rightHeight = validate(n.right)
+  assert(not (leftHeight > 0 and rightHeight > 0 and leftHeight != rightHeight), "Black violation")
+  assert(isNil(n.left) or n.left.value.k < n.value.k, "Left BST violation")
+  assert(isNil(n.right) or n.right.value.k > n.value.k, "Right BST violation")
+  if leftHeight > 0 and rightHeight > 0:
+    if isRed(n):
+      return leftHeight
+    else:
+      return leftHeight + 1
+  else:
+    return 0
+
+proc validate*[T](t: OrderedCountTable[T]) =
+  assert(not isRed(t.root), "Root violation")
+  discard validate(t.root)
 
 proc getOrDefault*[T](t: OrderedCountTable[T], k: T, default = 0): int =
   let node = find(t.root, k)
