@@ -15,7 +15,10 @@ proc findRoot*(f: proc(x: float): float, y: float, xGuess = 0.0, rate = 0.1, del
     prev = Inf
     loss = mse(xGuess)
   result = xGuess
-  while loss < prev:
-    result -= rate * slope(result)
+  while true:
+    let estimate = result - (rate * slope(result))
     prev = loss
-    loss = mse(result)
+    loss = mse(estimate)
+    if loss >= prev:
+      break
+    result = estimate
