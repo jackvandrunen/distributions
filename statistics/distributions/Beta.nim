@@ -43,3 +43,8 @@ method mean*(d: BetaDistribution): float =
 
 method variance*(d: BetaDistribution): float =
   d.v
+
+method mode*(d: BetaDistribution): seq[float] =
+  if d.alpha >= 1.0 and d.beta >= 1.0:
+    return @[d.aprev / (d.alpha + d.beta - 2)]
+  raise newException(ValueError, "Mode not well-defined for parameters")

@@ -29,6 +29,7 @@ suite "statistics-Bernoulli":
 
   test "expectation":
     check(d.median == d.quantile(0.5))
+    check(d.mode()[0] == 1)
     check(approx(d.mean, 0.7))
     check(approx(d.variance, 0.21))
     check(approx(d.std, 0.458258))

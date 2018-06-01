@@ -42,3 +42,8 @@ method mean*(d: GammaDistribution): float =
 
 method variance*(d: GammaDistribution): float =
   d.v
+
+method mode*(d: GammaDistribution): seq[float] =
+  if d.alpha >= 1:
+    return @[d.aprev * d.binv]
+  raise newException(ValueError, "Mode not well-defined for parameters")

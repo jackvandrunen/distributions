@@ -32,3 +32,6 @@ method mean*(d: GeometricDistribution): float =
 
 method variance*(d: GeometricDistribution): float =
   d.v
+
+method mode*(d: GeometricDistribution): seq[int] =
+  @[1]

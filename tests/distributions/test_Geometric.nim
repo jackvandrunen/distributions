@@ -32,6 +32,7 @@ suite "statistics-Geometric":
 
   test "expectation":
     check(d.median == d.quantile(0.5))
+    check(d.mode()[0] == 1)
     check(approx(d.mean, 100.0))
     check(approx(d.variance, 9900.0))
     check(approx(d.std, 99.4987))

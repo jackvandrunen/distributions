@@ -28,6 +28,7 @@ suite "statistics-ChiSquared":
 
   test "expectation":
     check(approx(d.median, d.quantile(0.5)))
+    check(approx(d.mode[0], 1.0))
     check(approx(d.mean, 3.0))
     check(approx(d.variance, 6.0))
     check(approx(d.std, 2.44949))

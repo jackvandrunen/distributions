@@ -27,3 +27,6 @@ method mean*[T](d: PointMassDistribution[T]): float =
 
 method variance*[T](d: PointMassDistribution[T]): float =
   0.0
+
+method mode*[T](d: PointMassDistribution[T]): seq[T] =
+  @[d.a]

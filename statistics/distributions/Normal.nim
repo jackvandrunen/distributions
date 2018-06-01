@@ -37,3 +37,6 @@ method mean*(d: NormalDistribution): float =
 
 method variance*(d: NormalDistribution): float =
   d.v
+
+method mode*(d: NormalDistribution): seq[float] =
+  @[d.mu]

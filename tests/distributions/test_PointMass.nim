@@ -26,6 +26,7 @@ suite "statistics-PointMass":
   
   test "expectation":
     check(d.median == d.quantile(0.5))
+    check(d.mode()[0] == 12)
     check(approx(d.mean, 12.0))
     check(approx(d.variance, 0.0))
     check(approx(d.std, 0.0))

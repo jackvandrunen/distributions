@@ -31,3 +31,6 @@ method mean*(d: PoissonDistribution): float =
 
 method variance*(d: PoissonDistribution): float =
   d.lambda
+
+method mode*(d: PoissonDistribution): seq[int] =
+  @[int(d.lambda)]

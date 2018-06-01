@@ -32,6 +32,7 @@ suite "statistics-Normal":
 
   test "expectation":
     check(approx(d.median, d.quantile(0.5)))
+    check(approx(d.mode()[0], 0.0))
     check(approx(d.mean, 0.0))
     check(approx(d.variance, 1.0))
     check(approx(d.std, 1.0))

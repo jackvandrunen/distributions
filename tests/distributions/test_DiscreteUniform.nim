@@ -29,6 +29,8 @@ suite "statistics-DiscreteUniform":
   
   test "expectation":
     check(d.median == d.quantile(0.5))
+    expect(ValueError):
+      discard d.mode()
     check(approx(d.mean, 5.5))
     check(approx(d.variance, 6.75))
     check(approx(d.std, 2.59808))

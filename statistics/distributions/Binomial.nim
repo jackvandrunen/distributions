@@ -33,3 +33,6 @@ method mean*(d: BinomialDistribution): float =
 
 method variance*(d: BinomialDistribution): float =
   d.v
+
+method mode*(d: BinomialDistribution): seq[int] =
+  @[int(float(d.n + 1) * d.p)]

@@ -31,6 +31,7 @@ suite "statistics-Poisson":
 
   test "expectation":
     check(d.median == d.quantile(0.5))
+    check(d.mode()[0] == 4)
     check(approx(d.mean, 4.0))
     check(approx(d.variance, 4.0))
     check(approx(d.std, 2.0))

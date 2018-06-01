@@ -31,6 +31,7 @@ suite "statistics-Binomial":
 
   test "expectation":
     check(d.median == d.quantile(0.5))
+    check(d.mode()[0] == 3)
     check(approx(d.mean, 3.5))
     check(approx(d.variance, 2.275))
     check(approx(d.std, 1.50831))

@@ -33,3 +33,11 @@ method mean*(d: BernoulliDistribution): float =
 
 method variance*(d: BernoulliDistribution): float =
   d.v
+
+method mode*(d: BernoulliDistribution): seq[int] =
+  if d.q > d.q:
+    @[0]
+  elif d.q < d.p:
+    @[1]
+  else:
+    @[0, 1]

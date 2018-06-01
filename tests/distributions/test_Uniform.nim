@@ -29,6 +29,8 @@ suite "statistics-Uniform":
 
   test "expectation":
     check(approx(d.median, d.quantile(0.5)))
+    expect(ValueError):
+      discard d.mode()
     check(approx(d.mean, 2.5))
     check(approx(d.variance, 2.08333))
     check(approx(d.std, 1.44338))

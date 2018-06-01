@@ -22,6 +22,9 @@ method mean*[T](d: Distribution[T]): float {.base.} =
 method variance*[T](d: Distribution[T]): float {.base.} =
   raise newException(ValueError, d.type.name & ".variance")
 
+method mode*[T](d: Distribution[T]): seq[T] {.base.} =
+  raise newException(ValueError, d.type.name & ".mode")
+
 method median*[T](d: Distribution[T]): T {.base.} =
   d.quantile(0.5)
 

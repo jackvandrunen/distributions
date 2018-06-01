@@ -39,3 +39,6 @@ method mean*(d: ChiSquaredDistribution): float =
 
 method variance*(d: ChiSquaredDistribution): float =
   2.0 * d.pf
+
+method mode*(d: ChiSquaredDistribution): seq[float] =
+  @[max(d.pf - 2.0, 0.0)]

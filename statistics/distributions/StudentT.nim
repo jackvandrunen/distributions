@@ -43,3 +43,6 @@ method variance*(d: StudentTDistribution): float =
     d.nu / (d.nu - 2.0)
   else:
     raise newException(ValueError, "variance not defined for nu <= 2")
+
+method mode*(d: StudentTDistribution): seq[float] =
+  @[0.0]

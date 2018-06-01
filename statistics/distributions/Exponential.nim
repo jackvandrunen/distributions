@@ -30,3 +30,6 @@ method mean*(d: ExponentialDistribution): float =
 
 method variance*(d: ExponentialDistribution): float =
   d.v
+
+method mode*(d: ExponentialDistribution): seq[float] =
+  @[0.0]

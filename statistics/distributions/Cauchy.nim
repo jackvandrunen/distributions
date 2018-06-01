@@ -19,3 +19,6 @@ method cdf*(d: CauchyDistribution, x: float): float =
 method quantile*(d: CauchyDistribution, q: float): float =
   checkNormal(q)
   tan((q - 0.5) * PI)
+
+method mode*(d: CauchyDistribution): seq[float] =
+  @[0.0]
