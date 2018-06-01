@@ -1,12 +1,12 @@
-import ../../statistics/distributions/Empirical
+import ../../statistics/distributions/Sampling
 import ../ut_utils
 import unittest
 
-suite "statistics-Empirical":
+suite "statistics-Sampling":
   let s = @[1, 2, 3, 2, 4, 2, 2, 3, 1, 6, 5, 2]
   let s2 = @[1, 2, 3, 3, 5, 4, 5, 4, 4, 5]
-  let d = Empirical(s)
-  let d2 = Empirical(s2)
+  let d = Sampling(s)
+  let d2 = Sampling(s2)
 
   test "converter":
     check(approx(s.variance, d.variance))
