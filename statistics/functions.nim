@@ -1,5 +1,8 @@
 import math
 
+when defined(JS):
+  include ./private/jsmath
+
 proc erfinv*(x: float): float =
   var w = - ln((1.0 - x) * (1.0 + x))
   if w < 6.25:
