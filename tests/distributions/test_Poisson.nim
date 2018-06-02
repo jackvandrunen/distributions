@@ -1,9 +1,15 @@
 import ../../statistics/distributions/Poisson
 import ../ut_utils
+import sets
 import unittest
 
 suite "statistics-Poisson":
   let d = Poisson(4.0)
+
+  test "object stuff":
+    check($d == "Poisson(4.0)")
+    var s = initSet[PoissonDistribution]()
+    s.incl(d)
 
   test "pmf":
     check(approx(d.pmf(-1), 0.0))

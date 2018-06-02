@@ -1,4 +1,6 @@
 import lists
+import sequtils
+import hashes
 
 type
   Comparable* = concept x, y
@@ -147,3 +149,12 @@ iterator items*[T](t: OrderedCountTable[T]): tuple[k: T, v: int] =
     yield nodes.head.value.value
     current = nodes.head.value.right
     nodes.remove(nodes.head)
+
+converter `$`*[T](d: OrderedCountTable[T]): string =
+  $toSeq(d.items())
+
+proc hash*[T](t: OrderedCountTable[T]): Hash =
+  var h: Hash = 0
+  for i in t.items():
+    h = h !& hash(i)
+  result = !$h

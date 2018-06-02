@@ -1,9 +1,15 @@
 import ../../statistics/distributions/ChiSquared
 import ../ut_utils
+import sets
 import unittest
 
 suite "statistics-ChiSquared":
   let d = ChiSquared(3)
+
+  test "object stuff":
+    check($d == "ChiSquared(3)")
+    var s = initSet[ChiSquaredDistribution]()
+    s.incl(d)
 
   test "pdf":
     check(approx(d.pdf(-1.0), 0.0))

@@ -2,6 +2,7 @@ import ../distributions
 import ../functions
 import ../roots
 import math
+import strformat
 include ./utils
 
 export distributions
@@ -24,6 +25,9 @@ proc Gamma*(alpha: float, beta: float): GammaDistribution =
     aprev: alpha - 1.0,
     binv: 1.0 / beta,
     m: alpha * beta, v: alpha * (beta * beta))
+
+converter `$`*(d: GammaDistribution): string =
+  fmt"Gamma({d.alpha}, {d.beta})"
 
 method pdf*(d: GammaDistribution, x: float): float =
   if x > 0.0:

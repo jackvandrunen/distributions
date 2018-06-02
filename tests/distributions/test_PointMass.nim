@@ -1,9 +1,15 @@
 import ../../statistics/distributions/PointMass
 import ../ut_utils
+import sets
 import unittest
 
 suite "statistics-PointMass":
   let d = PointMass(12)
+
+  test "object stuff":
+    check($d == "PointMass(12)")
+    var s = initSet[PointMassDistribution[int]]()
+    s.incl(d)
 
   test "pmf":
     check(approx(d.pmf(9), 0.0))

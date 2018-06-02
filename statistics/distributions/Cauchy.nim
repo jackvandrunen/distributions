@@ -1,5 +1,6 @@
 import ../distributions
 import math
+import strformat
 include ./utils
 
 export distributions
@@ -9,6 +10,9 @@ type
 
 proc Cauchy*(): CauchyDistribution =
   CauchyDistribution()
+
+converter `$`*(d: CauchyDistribution): string =
+  fmt"Cauchy()"
 
 method pdf*(d: CauchyDistribution, x: float): float =
   1.0 / (PI * (1.0 + (x * x)))

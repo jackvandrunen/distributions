@@ -1,9 +1,15 @@
 import ../../statistics/distributions/Binomial
 import ../ut_utils
+import sets
 import unittest
 
 suite "statistics-Binomial":
   let d = Binomial(10, 0.35)
+
+  test "object stuff":
+    check($d == "Binomial(10, 0.35)")
+    var s = initSet[BinomialDistribution]()
+    s.incl(d)
 
   test "pmf":
     check(approx(d.pmf(-1), 0.0))

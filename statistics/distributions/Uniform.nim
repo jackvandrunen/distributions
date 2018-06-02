@@ -1,4 +1,5 @@
 import ../distributions
+import strformat
 include ./utils
 
 export distributions
@@ -15,6 +16,9 @@ type
 proc Uniform*(a, b: float): UniformDistribution =
   UniformDistribution(a: a, b: b, r: b - a, rinv: 1.0 / (b - a),
     m: (a + b) / 2.0, v: ((b - a) * (b - a)) / 12.0)
+
+converter `$`*(d: UniformDistribution): string =
+  fmt"Uniform({d.a}, {d.b})"
 
 method pdf*(d: UniformDistribution, x: float): float =
   if d.a <= x and x <= d.b:

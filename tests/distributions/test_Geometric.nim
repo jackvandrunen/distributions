@@ -1,9 +1,15 @@
 import ../../statistics/distributions/Geometric
 import ../ut_utils
+import sets
 import unittest
 
 suite "statistics-Geometric":
   let d = Geometric(0.01)
+
+  test "object stuff":
+    check($d == "Geometric(0.01)")
+    var s = initSet[GeometricDistribution]()
+    s.incl(d)
 
   test "pmf":
     check(approx(d.pmf(-1), 0.0))

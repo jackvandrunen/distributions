@@ -1,9 +1,15 @@
 import ../../statistics/distributions/DiscreteUniform
 import ../ut_utils
+import sets
 import unittest
 
 suite "statistics-DiscreteUniform":
   let d = DiscreteUniform(10)
+
+  test "object stuff":
+    check($d == "DiscreteUniform(10)")
+    var s = initSet[DiscreteUniformDistribution]()
+    s.incl(d)
   
   test "pmf":
     check(approx(d.pmf(-5), 0.0))

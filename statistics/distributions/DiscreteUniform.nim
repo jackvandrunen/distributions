@@ -1,4 +1,5 @@
 import ../distributions
+import strformat
 include ./utils
 
 export distributions
@@ -14,6 +15,9 @@ type
 proc DiscreteUniform*(k: int): DiscreteUniformDistribution =
   DiscreteUniformDistribution(k: k, kf: float(k), kinv: 1.0 / float(k),
     m: float(1 + k) / 2.0, v: float((k - 1) * (k - 1)) / 12.0)
+
+converter `$`*(d: DiscreteUniformDistribution): string =
+  fmt"DiscreteUniform({d.k})"
 
 method pmf*(d: DiscreteUniformDistribution, x: int): float =
   if 1 <= x and x <= d.k:

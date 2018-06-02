@@ -2,6 +2,7 @@ import ../distributions
 import ../functions
 import ../roots
 import math
+import strformat
 include ./utils
 
 export distributions
@@ -23,6 +24,9 @@ proc Beta*(alpha: float, beta: float): BetaDistribution =
     bab: 1.0 / beta(alpha, beta),
     m: alpha / (alpha + beta),
     v: alpha * beta / ((alpha + beta) * (alpha + beta) * (alpha + beta + 1)))
+
+converter `$`*(d: BetaDistribution): string =
+  fmt"Beta({d.alpha}, {d.beta})"
 
 method pdf*(d: BetaDistribution, x: float): float =
   if x > 0.0 and x < 1.0:

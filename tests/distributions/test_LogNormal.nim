@@ -1,9 +1,15 @@
 import ../../statistics/distributions/LogNormal
 import ../ut_utils
+import sets
 import unittest
 
 suite "statistics-LogNormal":
   let d = LogNormal(0.0, 1.0)
+
+  test "object stuff":
+    check($d == "LogNormal(0.0, 1.0)")
+    var s = initSet[LogNormalDistribution]()
+    s.incl(d)
 
   test "pdf":
     check(approx(d.pdf(0.0), 0.0))

@@ -1,9 +1,15 @@
 import ../../statistics/distributions/Beta
 import ../ut_utils
+import sets
 import unittest
 
 suite "statistics-Beta":
   let d = Beta(1.0, 2.0)
+
+  test "object stuff":
+    check($d == "Beta(1.0, 2.0)")
+    var s = initSet[BetaDistribution]()
+    s.incl(d)
 
   test "pdf":
     check(approx(d.pdf(-1.0), 0.0))

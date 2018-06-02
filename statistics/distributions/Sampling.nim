@@ -1,6 +1,8 @@
 import ../distributions
 import ../private/tables2
 import math
+import strformat
+import typetraits
 include ./utils
 
 export distributions
@@ -23,6 +25,11 @@ converter Sampling*[T](s: openarray[T]): SamplingDistribution[T] =
     v += pow(float(i.k) - m, 2.0) * float(i.v)
   v = v / float(s.len - 1)
   SamplingDistribution[T](s: t, m: m, v: v)
+
+converter `$`*[T](d: SamplingDistribution[T]): string =
+  let dType = T.name
+  let sHash = hash(d.s)
+  fmt"Sampling[{dType}]({sHash})"
 
 converter Sampling*[T](s: seq[T]): SamplingDistribution[T] =
   Sampling(openarray(s))

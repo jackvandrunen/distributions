@@ -1,9 +1,15 @@
 import ../../statistics/distributions/Uniform
 import ../ut_utils
+import sets
 import unittest
 
 suite "statistics-Uniform":
   let d = Uniform(0.0, 5.0)
+
+  test "object stuff":
+    check($d == "Uniform(0.0, 5.0)")
+    var s = initSet[UniformDistribution]()
+    s.incl(d)
   
   test "pdf":
     check(approx(d.pdf(-1.0), 0.0))

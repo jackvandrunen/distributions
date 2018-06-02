@@ -2,6 +2,7 @@ import ../distributions
 import ../functions
 import ../roots
 import math
+import strformat
 include ./utils
 
 export distributions
@@ -18,6 +19,9 @@ proc StudentT*(nu: float): StudentTDistribution =
     a: -0.5 * (nu + 1.0),
     b: 1.0 / (sqrt(nu) * beta(0.5, 0.5 * nu)),
     c: 0.5 * nu)
+
+converter `$`*(d: StudentTDistribution): string =
+  fmt"StudentT({d.nu})"
 
 method pdf*(d: StudentTDistribution, x: float): float =
   d.b * pow(1.0 + ((x * x) / d.nu), d.a)

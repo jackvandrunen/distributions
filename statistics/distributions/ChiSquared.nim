@@ -2,6 +2,7 @@ import ../distributions
 import ../functions
 import ../roots
 import math
+import strformat
 include ./utils
 
 export distributions
@@ -21,6 +22,9 @@ proc ChiSquared*(p: int): ChiSquaredDistribution =
     a: a,
     b: b,
     c: b / pow(2.0, a))
+
+converter `$`*(d: ChiSquaredDistribution): string =
+  fmt"ChiSquared({d.p})"
 
 method pdf*(d: ChiSquaredDistribution, x: float): float =
   if x > 0.0:

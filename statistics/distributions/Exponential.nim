@@ -1,5 +1,6 @@
 import ../distributions
 import math
+import strformat
 include ./utils
 
 export distributions
@@ -12,6 +13,9 @@ type
 
 proc Exponential*(beta: float): ExponentialDistribution =
   ExponentialDistribution(beta: beta, binv: 1.0 / beta, v: beta * beta)
+
+converter `$`*(d: ExponentialDistribution): string =
+  fmt"Exponential({d.beta})"
 
 method pdf*(d: ExponentialDistribution, x: float): float =
   if x > 0.0:

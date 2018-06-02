@@ -1,9 +1,15 @@
 import ../../statistics/distributions/Cauchy
 import ../ut_utils
+import sets
 import unittest
 
 suite "statistics-Cauchy":
   let d = Cauchy()
+
+  test "object stuff":
+    check($d == "Cauchy()")
+    var s = initSet[CauchyDistribution]()
+    s.incl(d)
 
   test "pdf":
     check(approx(d.pdf(-1.0), 0.159155))

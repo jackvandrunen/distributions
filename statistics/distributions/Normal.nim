@@ -1,6 +1,7 @@
 import ../distributions
 import ../functions
 import math
+import strformat
 include ./utils
 
 export distributions
@@ -20,6 +21,9 @@ proc Normal*(mean: float, variance: float): NormalDistribution =
     dnorm: 1.0 / (sqrt(2.0 * PI) * sigma),
     vnorm: 1.0 / (2.0 * variance),
     r2v: sqrt(2.0) * sigma)
+
+converter `$`*(d: NormalDistribution): string =
+  fmt"Normal({d.mu}, {d.v})"
 
 method pdf*(d: NormalDistribution, x: float): float =
   let xm = x - d.mu

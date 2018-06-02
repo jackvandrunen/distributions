@@ -1,10 +1,16 @@
 import ../../statistics/distributions/Bernoulli
 import ../ut_utils
+import sets
 import unittest
 
 suite "statistics-Bernoulli":
   let d = Bernoulli(0.7)
-  
+
+  test "object stuff":
+    check($d == "Bernoulli(0.7)")
+    var s = initSet[BernoulliDistribution]()
+    s.incl(d)
+
   test "pmf":
     check(approx(d.pmf(-1), 0.0))
     check(approx(d.pmf(0), 0.3))

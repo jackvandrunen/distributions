@@ -1,6 +1,7 @@
 import ../distributions
 import ../roots
 import math
+import strformat
 include ./utils
 
 export distributions
@@ -12,6 +13,9 @@ type
 
 proc Poisson*(lambda: float): PoissonDistribution =
   PoissonDistribution(lambda: lambda, nlambda: exp(-1.0 * lambda))
+
+converter `$`*(d: PoissonDistribution): string =
+  fmt"Poisson({d.lambda})"
 
 method pmf*(d: PoissonDistribution, x: int): float =
   if x >= 0:

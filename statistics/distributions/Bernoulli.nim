@@ -1,4 +1,5 @@
 import ../distributions
+import strformat
 include ./utils
 
 export distributions
@@ -11,6 +12,9 @@ type
 
 proc Bernoulli*(p: float): BernoulliDistribution =
   BernoulliDistribution(p: p, q: 1.0 - p, v: p * (1.0 - p))
+
+converter `$`*(d: BernoulliDistribution): string =
+  fmt"Bernoulli({d.p})"
 
 method pmf*(d: BernoulliDistribution, x: int): float =
   if x == 0:

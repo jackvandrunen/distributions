@@ -1,9 +1,15 @@
 import ../../statistics/distributions/Normal
 import ../ut_utils
+import sets
 import unittest
 
 suite "statistics-Normal":
   let d = Normal(0.0, 1.0)
+
+  test "object stuff":
+    check($d == "Normal(0.0, 1.0)")
+    var s = initSet[NormalDistribution]()
+    s.incl(d)
 
   test "pdf":
     check(approx(d.pdf(-3.4), 0.00123))

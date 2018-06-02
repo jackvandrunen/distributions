@@ -1,6 +1,7 @@
 import ../distributions
 import ../roots
 import math
+import strformat
 include ./utils
 
 export distributions
@@ -15,6 +16,9 @@ type
 
 proc Binomial*(n: int, p: float): BinomialDistribution =
   BinomialDistribution(n: n, p: p, q: 1.0 - p, m: float(n) * p, v: float(n) * p * (1.0 - p))
+
+converter `$`*(d: BinomialDistribution): string =
+  fmt"Binomial({d.n}, {d.p})"
 
 method pmf*(d: BinomialDistribution, x: int): float =
   if x >= 0:

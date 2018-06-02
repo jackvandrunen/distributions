@@ -1,6 +1,7 @@
 import ../distributions
 import ../roots
 import math
+import strformat
 include ./utils
 
 export distributions
@@ -14,6 +15,9 @@ type
 
 proc Geometric*(p: float): GeometricDistribution =
   GeometricDistribution(p: p, q: 1.0 - p, m: 1.0 / p, v: (1.0 - p) / (p * p))
+
+converter `$`*(d: GeometricDistribution): string =
+  fmt"Geometric({d.p})"
 
 method pmf*(d: GeometricDistribution, x: int): float =
   if x > 0:

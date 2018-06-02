@@ -1,9 +1,15 @@
 import ../../statistics/distributions/StudentT
 import ../ut_utils
+import sets
 import unittest
 
 suite "statistics-StudentT":
   let d = StudentT(1.0)
+
+  test "object stuff":
+    check($d == "StudentT(1.0)")
+    var s = initSet[StudentTDistribution]()
+    s.incl(d)
 
   test "pdf":
     check(approx(d.pdf(-1.0), 0.159155))

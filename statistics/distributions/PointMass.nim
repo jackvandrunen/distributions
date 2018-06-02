@@ -1,4 +1,5 @@
 import ../distributions
+import strformat
 include ./utils
 
 export distributions
@@ -9,6 +10,9 @@ type
 
 proc PointMass*[T](a: T): PointMassDistribution[T] =
   PointMassDistribution[T](a: a)
+
+converter `$`*[T](d: PointMassDistribution[T]): string =
+  fmt"PointMass({d.a})"
 
 method pmf*[T](d: PointMassDistribution[T], x: T): float =
   if x == d.a:

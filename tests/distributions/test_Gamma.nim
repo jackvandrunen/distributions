@@ -1,9 +1,15 @@
 import ../../statistics/distributions/Gamma
 import ../ut_utils
+import sets
 import unittest
 
 suite "statistics-Gamma":
   let d = Gamma(1.0, 2.0)
+
+  test "object stuff":
+    check($d == "Gamma(1.0, 2.0)")
+    var s = initSet[GammaDistribution]()
+    s.incl(d)
 
   test "pdf":
     check(approx(d.pdf(-1.0), 0.0))

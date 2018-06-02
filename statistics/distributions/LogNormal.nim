@@ -1,6 +1,7 @@
 import ../distributions
 import ../functions
 import math
+import strformat
 include ./utils
 
 export distributions
@@ -20,6 +21,9 @@ proc LogNormal*(mean: float, variance: float): LogNormalDistribution =
     dnorm: 1.0 / (sqrt(2.0 * PI) * sigma),
     vnorm: 1.0 / (2.0 * variance),
     r2v: sqrt(2.0) * sigma)
+
+converter `$`*(d: LogNormalDistribution): string =
+  fmt"LogNormal({d.mu}, {d.v})"
 
 method pdf*(d: LogNormalDistribution, x: float): float =
   if x > 0.0:

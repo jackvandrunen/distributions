@@ -1,5 +1,8 @@
 import ../../statistics/distributions/Sampling
+import ../../statistics/private/tables2
 import ../ut_utils
+import sets
+import strformat
 import unittest
 
 suite "statistics-Sampling":
@@ -7,6 +10,12 @@ suite "statistics-Sampling":
   let s2 = @[1, 2, 3, 3, 5, 4, 5, 4, 4, 5]
   let d = Sampling(s)
   let d2 = Sampling(s2)
+  let t = initOrderedCountTable(s)
+
+  test "object stuff":
+    check($d == fmt"Sampling[int]({hash(t)})")
+    var s = initSet[SamplingDistribution[int]]()
+    s.incl(d)
 
   test "converter":
     check(approx(s.variance, d.variance))
