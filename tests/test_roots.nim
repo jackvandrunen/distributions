@@ -8,7 +8,7 @@ suite "statistics-roots":
   proc lin(x: openarray[float], p: openarray[float]): float =
     (x[0] * p[0]) + p[1]
   
-  suite "findParams":
+  test "findParams":
     let p = findParams(lin, x, y, @[0.0, 0.0])
     check(approx(p[0], 0.306407))
     check(approx(p[1], 8.060283))
