@@ -49,3 +49,5 @@ suite "statistics-Sampling":
     check(approx(d.mean, 2.75))
     check(approx(d.variance, 2.386364))
     check(approx(d.std, 1.544786))
+    check(approx(d.skewness, 0.898278))
+    check(approx(d.kurtosis, -0.21388))

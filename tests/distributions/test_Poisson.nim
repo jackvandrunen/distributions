@@ -41,3 +41,5 @@ suite "statistics-Poisson":
     check(approx(d.mean, 4.0))
     check(approx(d.variance, 4.0))
     check(approx(d.std, 2.0))
+    check(approx(d.skewness, 0.5))
+    check(approx(d.kurtosis, 0.25))

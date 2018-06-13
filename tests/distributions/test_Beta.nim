@@ -40,3 +40,5 @@ suite "statistics-Beta":
     check(approx(d.mean, 0.333333))
     check(approx(d.variance, 0.055556))
     check(approx(d.std, 0.235702))
+    check(approx(d.skewness, 0.565685))
+    check(approx(d.kurtosis, -0.6))

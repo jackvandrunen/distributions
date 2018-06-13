@@ -22,6 +22,10 @@ suite "statistics-Binomial":
     check(approx(d.cdf(-1), 0.0))
     check(approx(d.cdf(0), 0.01346))
     check(approx(d.cdf(1), 0.08595))
+    echo d.cdf(0)
+    echo d.cdf(1)
+    echo d.cdf(3)
+    echo d.cdf(6)
     check(approx(d.cdf(3), 0.51382))
     check(approx(d.cdf(6), 0.97397))
 
@@ -41,3 +45,5 @@ suite "statistics-Binomial":
     check(approx(d.mean, 3.5))
     check(approx(d.variance, 2.275))
     check(approx(d.std, 1.50831))
+    check(approx(d.skewness, 0.198898))
+    check(approx(d.kurtosis, -0.16044))

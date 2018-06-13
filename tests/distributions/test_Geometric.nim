@@ -42,3 +42,5 @@ suite "statistics-Geometric":
     check(approx(d.mean, 100.0))
     check(approx(d.variance, 9900.0))
     check(approx(d.std, 99.4987))
+    check(approx(d.skewness, 2.00003))
+    check(approx(d.kurtosis, 6.0001))

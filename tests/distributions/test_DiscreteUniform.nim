@@ -40,3 +40,5 @@ suite "statistics-DiscreteUniform":
     check(approx(d.mean, 5.5))
     check(approx(d.variance, 6.75))
     check(approx(d.std, 2.59808))
+    check(approx(d.skewness, 0.0))
+    check(approx(d.kurtosis, -1.22424))

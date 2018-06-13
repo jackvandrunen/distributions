@@ -88,6 +88,10 @@ proc lgammainc*(s, z: float): float =
   result = s - (s * z / result)
   result = -ln(result) + (s * ln(z)) - z
 
+proc ugammainc*(s, z: float): float =
+  let lg = lgamma(s)
+  lg + ln(1.0 - exp(lgammainc(s, z) - lg))
+
 proc beta*(a, b: float): float =
   exp(lgamma(a) + lgamma(b) - lgamma(a + b))
 
@@ -102,9 +106,6 @@ proc betaincreg*(z, a, b: float): float =
       let ap2k = a + (2.0 * kf)
       kf * (b - kf) * z / (ap2k * (ap2k - 1))
   result = 1.0
-  result = 1.0 + (r(5) / result)
-  result = 1.0 + (r(4) / result)
-  result = 1.0 + (r(3) / result)
-  result = 1.0 + (r(2) / result)
-  result = 1.0 + (r(1) / result)
+  for i in countdown(20, 1):
+    result = 1.0 + (r(i) / result)
   result = (pow(z, a) * pow(1.0 - z, b) / (a * beta(a, b))) / result

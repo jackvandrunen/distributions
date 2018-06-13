@@ -42,3 +42,5 @@ suite "statistics-Normal":
     check(approx(d.mean, 0.0))
     check(approx(d.variance, 1.0))
     check(approx(d.std, 1.0))
+    check(approx(d.skewness, 0.0))
+    check(approx(d.kurtosis, 0.0))

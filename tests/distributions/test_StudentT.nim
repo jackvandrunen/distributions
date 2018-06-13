@@ -5,6 +5,7 @@ import unittest
 
 suite "statistics-StudentT":
   let d = StudentT(1.0)
+  let d2 = StudentT(5.0)
 
   test "object stuff":
     check($d == "StudentT(1.0)")
@@ -35,7 +36,16 @@ suite "statistics-StudentT":
     check(approx(d.mode()[0], 0.0))
     expect(ValueError):
       discard d.mean()
+    check(approx(d2.mean, 0.0))
     expect(ValueError):
       discard d.variance()
+    check(approx(d2.variance, 1.66667))
     expect(ValueError):
       discard d.std()
+    check(approx(d2.std, 1.29099))
+    expect(ValueError):
+      discard d.skewness()
+    check(approx(d2.skewness, 0.0))
+    expect(ValueError):
+      discard d.kurtosis()
+    check(approx(d2.kurtosis, 6.0))

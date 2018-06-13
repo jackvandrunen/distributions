@@ -36,3 +36,7 @@ suite "statistics-PointMass":
     check(approx(d.mean, 12.0))
     check(approx(d.variance, 0.0))
     check(approx(d.std, 0.0))
+    expect(ValueError):
+      discard d.skewness()
+    expect(ValueError):
+      discard d.kurtosis()

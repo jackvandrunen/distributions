@@ -10,25 +10,19 @@ export distributions
 type
   StudentTDistribution* = ref object of Distribution[float]
     nu*: float
-    a: float
-    b: float
-    c: float
 
 proc StudentT*(nu: float): StudentTDistribution =
-  StudentTDistribution(nu: nu,
-    a: -0.5 * (nu + 1.0),
-    b: 1.0 / (sqrt(nu) * beta(0.5, 0.5 * nu)),
-    c: 0.5 * nu)
+  StudentTDistribution(nu: nu)
 
 converter `$`*(d: StudentTDistribution): string =
   fmt"StudentT({d.nu})"
 
 method pdf*(d: StudentTDistribution, x: float): float =
-  d.b * pow(1.0 + ((x * x) / d.nu), d.a)
+  pow(1.0 + ((x * x) / d.nu), -0.5 * (d.nu + 1.0)) / (sqrt(d.nu) * beta(0.5, 0.5 * d.nu))
 
 method cdf*(d: StudentTDistribution, x: float): float =
   let x2 = x * x
-  result = 0.5 * (betaincreg(x2 / (x2 + d.nu), 0.5, d.c) + 1.0)
+  result = 0.5 * (betaincreg(x2 / (x2 + d.nu), 0.5, 0.5 * d.nu) + 1.0)
   if x < 0.0:
     result = 1.0 - result
 
@@ -47,6 +41,18 @@ method variance*(d: StudentTDistribution): float =
     d.nu / (d.nu - 2.0)
   else:
     raise newException(ValueError, "variance not defined for nu <= 2")
+
+method skewness*(d: StudentTDistribution): float =
+  if d.nu > 3.0:
+    0.0
+  else:
+    raise newException(ValueError, "skewness not defined for nu <= 3")
+
+method kurtosis*(d: StudentTDistribution): float =
+  if d.nu > 4.0:
+    6.0 / (d.nu - 4.0)
+  else:
+    raise newException(ValueError, "kurtosis not defined for nu <= 4")
 
 method mode*(d: StudentTDistribution): seq[float] =
   @[0.0]

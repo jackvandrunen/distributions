@@ -8,22 +8,20 @@ export distributions
 type
   ExponentialDistribution* = ref object of Distribution[float]
     beta*: float
-    binv: float
-    v: float
 
 proc Exponential*(beta: float): ExponentialDistribution =
-  ExponentialDistribution(beta: beta, binv: 1.0 / beta, v: beta * beta)
+  ExponentialDistribution(beta: beta)
 
 converter `$`*(d: ExponentialDistribution): string =
   fmt"Exponential({d.beta})"
 
 method pdf*(d: ExponentialDistribution, x: float): float =
   if x > 0.0:
-    result = d.binv * exp(-x * d.binv)
+    result = exp(-x / d.beta) / d.beta
 
 method cdf*(d: ExponentialDistribution, x: float): float =
   if x > 0.0:
-    result = 1.0 - exp(-x * d.binv)
+    result = 1.0 - exp(-x / d.beta)
 
 method quantile*(d: ExponentialDistribution, q: float): float =
   checkNormal(q)
@@ -33,7 +31,13 @@ method mean*(d: ExponentialDistribution): float =
   d.beta
 
 method variance*(d: ExponentialDistribution): float =
-  d.v
+  d.beta * d.beta
+
+method skewness*(d: ExponentialDistribution): float =
+  2.0
+
+method kurtosis*(d: ExponentialDistribution): float =
+  6.0
 
 method mode*(d: ExponentialDistribution): seq[float] =
   @[0.0]

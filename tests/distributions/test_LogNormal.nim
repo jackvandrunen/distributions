@@ -35,3 +35,5 @@ suite "statistics-LogNormal":
     check(approx(d.mean, 1.0))
     check(approx(d.variance, 4.67077427))
     check(approx(d.std, 2.161197))
+    check(approx(d.skewness, 6.18488))
+    check(approx(d.kurtosis, 110.93639))

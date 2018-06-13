@@ -38,3 +38,5 @@ suite "statistics-ChiSquared":
     check(approx(d.mean, 3.0))
     check(approx(d.variance, 6.0))
     check(approx(d.std, 2.44949))
+    check(approx(d.skewness, 1.63299))
+    check(approx(d.kurtosis, 4.0))

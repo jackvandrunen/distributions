@@ -9,40 +9,40 @@ export distributions
 
 type
   ChiSquaredDistribution* = ref object of Distribution[float]
-    p*: int
-    pf: float
-    a: float
-    b: float
-    c: float
+    p*: float
 
 proc ChiSquared*(p: int): ChiSquaredDistribution =
-  let a = 0.5 * float(p)
-  let b = exp(-lgamma(a))
-  ChiSquaredDistribution(p: p, pf: float(p),
-    a: a,
-    b: b,
-    c: b / pow(2.0, a))
+  ChiSquaredDistribution(p: float(p))
 
 converter `$`*(d: ChiSquaredDistribution): string =
-  fmt"ChiSquared({d.p})"
+  fmt"ChiSquared({int(d.p)})"
 
 method pdf*(d: ChiSquaredDistribution, x: float): float =
+  let a = 0.5 * d.p
+  let b = exp(-lgamma(a))
   if x > 0.0:
-    result = d.c * pow(x, d.a - 1.0) * exp(-0.5 * x)
+    result = (b / pow(2.0, a)) * pow(x, a - 1.0) * exp(-0.5 * x)
 
 method cdf*(d: ChiSquaredDistribution, x: float): float =
+  let a = 0.5 * d.p
   if x > 0.0:
-    result = exp(ln(d.b) + lgammainc(d.a, 0.5 * x))
+    result = exp(-lgamma(a) + lgammainc(a, 0.5 * x))
 
 method quantile*(d: ChiSquaredDistribution, q: float): float =
   checkNormal(q)
-  findRoot(proc(x: float): float = d.cdf(x), q, d.pf)
+  findRoot(proc(x: float): float = d.cdf(x), q, d.p)
 
 method mean*(d: ChiSquaredDistribution): float =
-  d.pf
+  d.p
 
 method variance*(d: ChiSquaredDistribution): float =
-  2.0 * d.pf
+  2.0 * d.p
+
+method skewness*(d: ChiSquaredDistribution): float =
+  sqrt(8.0 / d.p)
+
+method kurtosis*(d: ChiSquaredDistribution): float =
+  12.0 / d.p
 
 method mode*(d: ChiSquaredDistribution): seq[float] =
-  @[max(d.pf - 2.0, 0.0)]
+  @[max(d.p - 2.0, 0.0)]

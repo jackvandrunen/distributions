@@ -40,3 +40,5 @@ suite "statistics-Uniform":
     check(approx(d.mean, 2.5))
     check(approx(d.variance, 2.08333))
     check(approx(d.std, 1.44338))
+    check(approx(d.skewness, 0.0))
+    check(approx(d.kurtosis, -1.2))

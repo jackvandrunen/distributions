@@ -39,3 +39,5 @@ suite "statistics-Bernoulli":
     check(approx(d.mean, 0.7))
     check(approx(d.variance, 0.21))
     check(approx(d.std, 0.458258))
+    check(approx(d.skewness, -0.872872))
+    check(approx(d.kurtosis, -1.2381))

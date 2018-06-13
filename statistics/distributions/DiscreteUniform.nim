@@ -7,31 +7,34 @@ export distributions
 type
   DiscreteUniformDistribution* = ref object of Distribution[int]
     k*: int
-    kf: float
-    kinv: float
-    m: float
-    v: float
 
 proc DiscreteUniform*(k: int): DiscreteUniformDistribution =
-  DiscreteUniformDistribution(k: k, kf: float(k), kinv: 1.0 / float(k),
-    m: float(1 + k) / 2.0, v: float((k - 1) * (k - 1)) / 12.0)
+  DiscreteUniformDistribution(k: k)
 
 converter `$`*(d: DiscreteUniformDistribution): string =
   fmt"DiscreteUniform({d.k})"
 
 method pmf*(d: DiscreteUniformDistribution, x: int): float =
   if 1 <= x and x <= d.k:
-    result = d.kinv
+    result = 1.0 / float(d.k)
 
 method cdf*(d: DiscreteUniformDistribution, x: int): float =
-  min(1.0, max(0.0, d.kinv * float(x)))
+  min(1.0, max(0.0, float(x) / float(d.k)))
 
 method quantile*(d: DiscreteUniformDistribution, q: float): int =
   checkNormal(q)
-  int(d.kf * q) + 1
+  int(float(d.k) * q) + 1
 
 method mean*(d: DiscreteUniformDistribution): float =
-  d.m
+  0.5 * float(1 + d.k)
 
 method variance*(d: DiscreteUniformDistribution): float =
-  d.v
+  let kprev = float(d.k - 1)
+  float(kprev * kprev / 12.0)
+
+method skewness*(d: DiscreteUniformDistribution): float =
+  0.0
+
+method kurtosis*(d: DiscreteUniformDistribution): float =
+  let k2 = float(d.k * d.k)
+  -6.0 * (k2 + 1) / (5.0 * (k2 - 1))

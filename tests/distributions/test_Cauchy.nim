@@ -39,3 +39,7 @@ suite "statistics-Cauchy":
       discard d.variance()
     expect(ValueError):
       discard d.std()
+    expect(ValueError):
+      discard d.skewness()
+    expect(ValueError):
+      discard d.kurtosis()

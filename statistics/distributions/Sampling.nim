@@ -10,21 +10,27 @@ export distributions
 type
   SamplingDistribution*[T: SomeNumber] = ref object of Distribution[T]
     s: OrderedCountTable[T]
-    m: float
-    v: float
+    m1: float
+    m2: float
+    m3: float
+    m4: float
 
 converter Sampling*[T](s: openarray[T]): SamplingDistribution[T] =
   var
     t = initOrderedCountTable(s)
-    m: float
-    v: float
+    m1, m2p, m2, m3, m4: float
   for i in t.items():
-    m += float(i.k) * float(i.v)
-  m = m / float(s.len)
+    m1 += float(i.k) * float(i.v)
+  m1 /= float(s.len)
   for i in t.items():
-    v += pow(float(i.k) - m, 2.0) * float(i.v)
-  v = v / float(s.len - 1)
-  SamplingDistribution[T](s: t, m: m, v: v)
+    m2 += pow(float(i.k) - m1, 2.0) * float(i.v)
+    m3 += pow(float(i.k) - m1, 3.0) * float(i.v)
+    m4 += pow(float(i.k) - m1, 4.0) * float(i.v)
+  m2p = m2 / float(s.len)
+  m2 /= float(s.len - 1)
+  m3 /= float(s.len) * pow(m2p, 1.5)
+  m4 /= float(s.len) * (m2p * m2p)
+  SamplingDistribution[T](s: t, m1: m1, m2: m2, m3: m3, m4: m4 - 3.0)
 
 converter `$`*[T](d: SamplingDistribution[T]): string =
   let dType = T.name
@@ -54,10 +60,16 @@ method quantile*[T](d: SamplingDistribution[T], q: float): T =
       return i.k
 
 method mean*[T](d: SamplingDistribution[T]): float =
-  d.m
+  d.m1
 
 method variance*[T](d: SamplingDistribution[T]): float =
-  d.v
+  d.m2
+
+method skewness*[T](d: SamplingDistribution[T]): float =
+  d.m3
+
+method kurtosis*[T](d: SamplingDistribution[T]): float =
+  d.m4
 
 method mode*[T](d: SamplingDistribution[T]): seq[T] =
   var current = -1

@@ -38,3 +38,5 @@ suite "statistics-Gamma":
     check(approx(d.mean, 2.0))
     check(approx(d.variance, 4.0))
     check(approx(d.std, 2.0))
+    check(approx(d.skewness, 2.0))
+    check(approx(d.kurtosis, 6.0))
