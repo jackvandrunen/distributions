@@ -1,15 +1,15 @@
 import ../distributions
-import ../private/tables2
 import math
 import strformat
-import typetraits
+import algorithm
+import hashes
 include ./utils
 
 export distributions
 
 type
   SamplingDistribution*[T: SomeNumber] = ref object of Distribution[T]
-    s: OrderedCountTable[T]
+    s: seq[T]
     m1: float
     m2: float
     m3: float
@@ -17,15 +17,13 @@ type
 
 converter Sampling*[T](s: openarray[T]): SamplingDistribution[T] =
   var
-    t = initOrderedCountTable(s)
+    t = sorted(s, proc(a, b: T): int = int(a - b))
     m1, m2p, m2, m3, m4: float
-  for i in t.items():
-    m1 += float(i.k) * float(i.v)
-  m1 /= float(s.len)
-  for i in t.items():
-    m2 += pow(float(i.k) - m1, 2.0) * float(i.v)
-    m3 += pow(float(i.k) - m1, 3.0) * float(i.v)
-    m4 += pow(float(i.k) - m1, 4.0) * float(i.v)
+  m1 = float(sum(t)) / float(t.len)
+  for i in t:
+    m2 += pow(float(i) - m1, 2.0)
+    m3 += pow(float(i) - m1, 3.0)
+    m4 += pow(float(i) - m1, 4.0)
   m2p = m2 / float(s.len)
   m2 /= float(s.len - 1)
   m3 /= float(s.len) * pow(m2p, 1.5)
@@ -33,31 +31,34 @@ converter Sampling*[T](s: openarray[T]): SamplingDistribution[T] =
   SamplingDistribution[T](s: t, m1: m1, m2: m2, m3: m3, m4: m4 - 3.0)
 
 converter `$`*[T](d: SamplingDistribution[T]): string =
-  let dType = T.name
-  let sHash = hash(d.s)
-  fmt"Sampling[{dType}]({sHash})"
+  fmt"Sampling({d.s})"
 
 converter Sampling*[T](s: seq[T]): SamplingDistribution[T] =
   Sampling(openarray(s))
 
 method pmf*[T](d: SamplingDistribution[T], x: T): float =
-  float(d.s.getOrDefault(x)) / float(d.s.counter)
+  var i = binarySearch(d.s, x)
+  let iMax = d.s.len - 1
+  if i < 0:
+    return 0.0
+  while i > 0 and d.s[i - 1] == x:
+    dec i
+  let start = i
+  while i < iMax and d.s[i + 1] == x:
+    inc i
+  float((i - start) + 1) / float(d.s.len)
 
 method cdf*[T](d: SamplingDistribution[T], x: T): float =
-  for i in d.s.items():
-    if i.k > x:
+  var count = 0
+  for i in d.s:
+    if i > x:
       break
-    result += float(i.v)
-  return result / float(d.s.counter)
+    inc count
+  return float(count) / float(d.s.len)
 
 method quantile*[T](d: SamplingDistribution[T], q: float): T =
-  let counter = float(d.s.counter)
-  var sum: float
   checkNormal(q)
-  for i in d.s.items():
-    sum += float(i.v) / counter
-    if sum >= q:
-      return i.k
+  d.s[int(q * float(d.s.len))]
 
 method mean*[T](d: SamplingDistribution[T]): float =
   d.m1
@@ -73,10 +74,23 @@ method kurtosis*[T](d: SamplingDistribution[T]): float =
 
 method mode*[T](d: SamplingDistribution[T]): seq[T] =
   var current = -1
-  for i in d.s.items():
-    if i.v > current:
-      result = newSeq[T]()
-      result.add(i.k)
-      current = i.v
-    elif i.v == current:
-      result.add(i.k)
+  var count = 0
+  var prev = d.s[0]
+  for i in d.s:
+    if i == prev:
+      inc count
+    else:
+      if count > current:
+        result = newSeq[T]()
+        result.add(prev)
+        current = count
+      elif count == current:
+        result.add(prev)
+      count = 1
+      prev = i
+  if count > current:
+    result = newSeq[T]()
+    result.add(prev)
+    current = count
+  elif count == current:
+    result.add(prev)

@@ -22,10 +22,6 @@ suite "statistics-Binomial":
     check(approx(d.cdf(-1), 0.0))
     check(approx(d.cdf(0), 0.01346))
     check(approx(d.cdf(1), 0.08595))
-    echo d.cdf(0)
-    echo d.cdf(1)
-    echo d.cdf(3)
-    echo d.cdf(6)
     check(approx(d.cdf(3), 0.51382))
     check(approx(d.cdf(6), 0.97397))
 
