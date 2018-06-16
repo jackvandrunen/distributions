@@ -22,7 +22,7 @@ method pdf*(d: StudentTDistribution, x: float): float =
 
 method cdf*(d: StudentTDistribution, x: float): float =
   let x2 = x * x
-  result = 0.5 * (betaincreg(x2 / (x2 + d.nu), 0.5, 0.5 * d.nu) + 1.0)
+  result = 0.5 * (incbet(0.5, 0.5 * d.nu, x2 / (x2 + d.nu)) + 1.0)
   if x < 0.0:
     result = 1.0 - result
 

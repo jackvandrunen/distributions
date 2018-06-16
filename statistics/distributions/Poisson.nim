@@ -24,7 +24,7 @@ method pmf*(d: PoissonDistribution, x: int): float =
 method cdf*(d: PoissonDistribution, x: int): float =
   if x >= 0:
     let xf = float(x + 1)
-    result = exp(ugammainc(xf, d.lambda) - lgamma(xf))
+    result = igamc(xf, d.lambda)
 
 method quantile*(d: PoissonDistribution, q: float): int =
   checkNormal(q)

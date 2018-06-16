@@ -24,7 +24,7 @@ method pdf*(d: BetaDistribution, x: float): float =
 
 method cdf*(d: BetaDistribution, x: float): float =
   if x > 0.0 and x < 1.0:
-    result = betaincreg(x, d.alpha, d.beta)
+    result = incbet(d.alpha, d.beta, x)
   if x >= 1.0:
     result = 1.0
 

@@ -19,14 +19,14 @@ converter `$`*(d: ChiSquaredDistribution): string =
 
 method pdf*(d: ChiSquaredDistribution, x: float): float =
   let a = 0.5 * d.p
-  let b = exp(-lgamma(a))
+  let b = 1.0 / tgamma(a)
   if x > 0.0:
     result = (b / pow(2.0, a)) * pow(x, a - 1.0) * exp(-0.5 * x)
 
 method cdf*(d: ChiSquaredDistribution, x: float): float =
   let a = 0.5 * d.p
   if x > 0.0:
-    result = exp(-lgamma(a) + lgammainc(a, 0.5 * x))
+    result = igam(a, 0.5 * x)
 
 method quantile*(d: ChiSquaredDistribution, q: float): float =
   checkNormal(q)

@@ -23,7 +23,7 @@ method pmf*(d: BinomialDistribution, x: int): float =
     result = float(binom(d.n, x)) * pow(d.p, float(x)) * pow(1.0 - d.p, float(d.n - x))
 
 method cdf*(d: BinomialDistribution, x: int): float =
-  betaincreg(1.0 - d.p, float(d.n - x), 1.0 + float(x))
+  incbet(float(d.n - x), 1.0 + float(x), 1.0 - d.p)
 
 method quantile*(d: BinomialDistribution, q: float): int =
   checkNormal(q)

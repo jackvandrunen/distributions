@@ -1,9 +1,6 @@
 import math
 
-when defined(JS):
-  include ./private/jsmath
-
-proc erfinv*(x: float): float =
+proc erfinv*(x: float64): float64 =
   var w = - ln((1.0 - x) * (1.0 + x))
   if w < 6.25:
     w = w - 3.125
@@ -72,40 +69,301 @@ proc erfinv*(x: float): float =
     result =       4.8499064014085844221 + result * w
   return result * x
 
-proc lgammainc*(s, z: float): float =
-  result = s + 12.0
-  result = s + 11.0 + ((6.0 * z) / result)
-  result = s + 10.0 - ((s + 5.0) * z / result)
-  result = s + 9.0 + ((5.0 * z) / result)
-  result = s + 8.0 - ((s + 4.0) * z / result)
-  result = s + 7.0 + ((4.0 * z) / result)
-  result = s + 6.0 - ((s + 3.0) * z / result)
-  result = s + 5.0 + ((3.0 * z) / result)
-  result = s + 4.0 - ((s + 2.0) * z / result)
-  result = s + 3.0 + ((2.0 * z) / result)
-  result = s + 2.0 - ((s + 1.0) * z / result)
-  result = s + 1.0 + (z / result)
-  result = s - (s * z / result)
-  result = -ln(result) + (s * ln(z)) - z
-
-proc ugammainc*(s, z: float): float =
-  let lg = lgamma(s)
-  lg + ln(1.0 - exp(lgammainc(s, z) - lg))
-
 proc beta*(a, b: float): float =
   exp(lgamma(a) + lgamma(b) - lgamma(a + b))
 
-proc betaincreg*(z, a, b: float): float =
-  proc r(k: int): float =
-    if k mod 2 == 1:
-      let kf = (float(k) - 1) / 2.0
-      let ap2k = a + (2.0 * kf)
-      -1.0 * (a + kf) * (a + b + kf) * z / (ap2k * (ap2k + 1))
+const MAXGAM: float64 = 34.84425627277176174
+const MAXLOG: float64 = 7.08396418532264106224E2
+const MINLOG: float64 = -7.08396418532264106224E2
+const MACHEP: float64 = 1.11022302462515654042E-16
+
+const big: float64 = 4.503599627370496e15
+const biginv: float64 =  2.22044604925031308085e-16
+
+proc igam*(a, x: float64): float64
+
+proc igamc*(a, x: float64): float64 =
+  var ax, y, z, c, pkm2, qkm2, pkm1, qkm1, yc, pk, qk, r, t: float64
+  if x <= 0.0 or a <= 0.0:
+    return 1.0
+  if x < 1.0 or x < a:
+    return 1.0 - igam(a, x)
+  ax = a * ln(x) - x - lgamma(a)
+  if ax < -MAXLOG:
+    return 0.0
+  ax = exp(ax)
+  y = 1.0 - a
+  z = x + y + 1.0
+  c = 0.0
+  pkm2 = 1.0
+  qkm2 = x
+  pkm1 = x + 1.0
+  qkm1 = z * x
+  result = pkm1 / qkm1
+  while true:
+    c += 1.0
+    y += 1.0
+    z += 2.0
+    yc = y * c
+    pk = pkm1 * z - pkm2 * yc
+    qk = qkm1 * z - qkm2 * yc
+    if qk != 0:
+      r = pk / qk
+      t = abs((result - r) / r)
+      result = r
     else:
-      let kf = float(k) / 2.0
-      let ap2k = a + (2.0 * kf)
-      kf * (b - kf) * z / (ap2k * (ap2k - 1))
+      t = 1.0
+    pkm2 = pkm1
+    pkm1 = pk
+    qkm2 = qkm1
+    qkm1 = qk
+    if abs(pk) > big:
+      pkm2 *= biginv
+      pkm1 *= biginv
+      qkm2 *= biginv
+      qkm1 *= biginv
+    if t <= MACHEP:
+      break
+  result *= ax
+
+proc igam*(a, x: float64): float64 =
+  var ax, r, c: float64
+  if x <= 0.0 or a <= 0.0:
+    return 0.0
+  if x > 1.0 and x > a:
+    return 1.0 - igamc(a, x)
+  ax = a * ln(x) - x - lgamma(a)
+  if (ax < -MAXLOG):
+    return 0.0
+  ax = exp(ax)
+  r = a
+  c = 1.0
   result = 1.0
-  for i in countdown(20, 1):
-    result = 1.0 + (r(i) / result)
-  result = (pow(z, a) * pow(1.0 - z, b) / (a * beta(a, b))) / result
+  while true:
+    r += 1.0
+    c *= x / r
+    result += c
+    if c / result <= MACHEP:
+      break
+  result *= ax / a
+
+proc incbcf(a, b, x: float64): float64
+
+proc incbd(a, b, x: float64): float64
+
+proc pseries(a, b, x: float64): float64
+
+proc incbet*(aa, bb, xx: float64): float64 =
+  var a, b, t, x, xc, w, y: float64
+  var flag: bool
+  if aa <= 0.0 or bb <= 0.0:
+    return 0.0
+  if xx <= 0.0 or xx >= 1.0:
+    if xx == 0.0:
+      return 0.0
+    if xx == 1.0:
+      return 1.0
+    return 0.0
+  if bb * xx <= 1.0 and xx <= 0.95:
+    return pseries(aa, bb, xx)
+  w = 1.0 - xx
+  if xx > (aa / (aa + bb)):
+    flag = true
+    a = bb
+    b = aa
+    xc = xx
+    x = w
+  else:
+    a = aa
+    b = bb
+    xc = w
+    x = xx
+  if flag and b * x <= 1.0 and x <= 0.95:
+    t = pseries(a, b, x)
+    if t <= MACHEP:
+      t = 1.0 - MACHEP
+    else:
+      t = 1.0 - t
+    return t
+  y = x * (a + b - 2.0) - (a - 1.0)
+  if y < 0.0:
+    w = incbcf(a, b, x)
+  else:
+    w = incbd(a, b, x) / xc
+  y = a * ln(x)
+  t = b * ln(xc)
+  if a + b < MAXGAM and abs(y) < MAXLOG and abs(t) < MAXLOG:
+    t = pow(xc, b)
+    t *= pow(x, a)
+    t /= a
+    t *= w
+    t *= tgamma(a + b) / (tgamma(a) * tgamma(b))
+    if flag:
+      if t <= MACHEP:
+        t = 1.0 - MACHEP
+      else:
+        t = 1.0 - t
+    return t
+  y += t + lgamma(a + b) - lgamma(a) - lgamma(b)
+  y += ln(w / a)
+  if y < MINLOG:
+    t = 0.0
+  else:
+    t = exp(y)
+  if flag:
+    if t <= MACHEP:
+      t = 1.0 - MACHEP
+    else:
+      t = 1.0 - t
+  return t
+
+proc incbcf(a, b, x: float64): float64 =
+  var xk, pk, pkm1, pkm2, qk, qkm1, qkm2, k1, k2, k3, k4, k5, k6, k7, k8, r, t, thresh: float64
+  k1 = a
+  k2 = a + b
+  k3 = a
+  k4 = a + 1.0
+  k5 = 1.0
+  k6 = b - 1.0
+  k7 = k4
+  k8 = a + 2.0
+  pkm2 = 0.0
+  qkm2 = 1.0
+  pkm1 = 1.0
+  qkm1 = 1.0
+  result = 1.0
+  r = 1.0
+  thresh = 3.0 * MACHEP
+  for n in 0..299:
+    xk = -(x * k1 * k2) / (k3 * k4)
+    pk = pkm1 + pkm2 * xk
+    qk = qkm1 + qkm2 * xk
+    pkm2 = pkm1
+    pkm1 = pk
+    qkm2 = qkm1
+    qkm1 = qk
+    xk = (x * k5 * k6) / (k7 * k8)
+    pk = pkm1 + pkm2 * xk
+    qk = qkm1 + qkm2 * xk
+    pkm2 = pkm1
+    pkm1 = pk
+    qkm2 = qkm1
+    qkm1 = qk
+    if qk != 0.0:
+      r = pk / qk
+    if r != 0.0:
+      t = abs((result - r) / r)
+      result = r
+    else:
+      t = 1.0
+    if t < thresh:
+      break
+    k1 += 1.0
+    k2 += 1.0
+    k3 += 2.0
+    k4 += 2.0
+    k5 += 1.0
+    k6 -= 1.0
+    k7 += 2.0
+    k8 += 2.0
+    if abs(qk) + abs(pk) > big:
+      pkm2 *= biginv
+      pkm1 *= biginv
+      qkm2 *= biginv
+      qkm1 *= biginv
+    if abs(qk) < biginv or abs(pk) < biginv:
+      pkm2 *= big
+      pkm1 *= big
+      qkm2 *= big
+      qkm1 *= big
+
+proc incbd(a, b, x: float64): float64 =
+  var xk, pk, pkm1, pkm2, qk, qkm1, qkm2, k1, k2, k3, k4, k5, k6, k7, k8, r, t, z, thresh: float64
+  k1 = a
+  k2 = b - 1.0
+  k3 = a
+  k4 = a + 1.0
+  k5 = 1.0
+  k6 = a + b
+  k7 = a + 1.0
+  k8 = a + 2.0
+  pkm2 = 0.0
+  qkm2 = 1.0
+  pkm1 = 1.0
+  qkm1 = 1.0
+  z = x / (1.0 - x)
+  result = 1.0
+  r = 1.0
+  thresh = 3.0 * MACHEP
+  for n in 0..299:
+    xk = -(z * k1 * k2) / (k3 * k4)
+    pk = pkm1 + pkm2 * xk
+    qk = qkm1 + qkm2 * xk
+    pkm2 = pkm1
+    pkm1 = pk
+    qkm2 = qkm1
+    qkm1 = qk
+    xk = (z * k5 * k6) / (k7 * k8)
+    pk = pkm1 + pkm2 * xk
+    qk = qkm1 + qkm2 * xk
+    pkm2 = pkm1
+    pkm1 = pk
+    qkm2 = qkm1
+    qkm1 = qk
+    if qk != 0.0:
+      r = pk / qk
+    if r != 0.0:
+      t = abs((result - r) / r)
+      result = r
+    else:
+      t = 1.0
+    if t < thresh:
+      break
+    k1 += 1.0
+    k2 -= 1.0
+    k3 += 2.0
+    k4 += 2.0
+    k5 += 1.0
+    k6 += 1.0
+    k7 += 2.0
+    k8 += 2.0
+    if abs(qk) + abs(pk) > big:
+      pkm2 *= biginv
+      pkm1 *= biginv
+      qkm2 *= biginv
+      qkm1 *= biginv
+    if abs(qk) < biginv or abs(pk) < biginv:
+      pkm2 *= big
+      pkm1 *= big
+      qkm2 *= big
+      qkm1 *= big
+
+proc pseries(a, b, x: float64): float64 =
+  var s, t, u, v, n, t1, z, ai: float64
+  ai = 1.0 / a
+  u = (1.0 - b) * x
+  v = u / (a + 1.0)
+  t1 = v
+  t = u
+  n = 2.0
+  s = 0.0
+  z = MACHEP * ai
+  while abs(v) > z:
+    u = (n - b) * x / n
+    t *= u
+    v = t / (a + n)
+    s += v
+    n += 1.0
+  s += t1
+  s += ai
+  u = a * ln(x)
+  if a + b < MAXGAM and abs(u) < MAXLOG:
+    t = tgamma(a + b) / (tgamma(a) * tgamma(b))
+    s = s * t * pow(x, a)
+  else:
+    t = lgamma(a + b) - lgamma(a) - lgamma(b) + u + ln(s)
+    if t < MINLOG:
+      s = 0.0
+    else:
+      s = exp(t)
+  return s
