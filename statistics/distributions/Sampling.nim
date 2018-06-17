@@ -1,5 +1,6 @@
 import ../distributions
 import math
+import sequtils
 import strformat
 import algorithm
 import hashes
@@ -9,11 +10,8 @@ export distributions
 
 type
   SamplingDistribution*[T: SomeNumber] = ref object of Distribution[T]
-    s: seq[T]
-    m1: float
-    m2: float
-    m3: float
-    m4: float
+    s, v: seq[T]
+    m1, m2, m3, m4: float
 
 converter Sampling*[T](s: openarray[T]): SamplingDistribution[T] =
   var
@@ -28,7 +26,7 @@ converter Sampling*[T](s: openarray[T]): SamplingDistribution[T] =
   m2 /= float(s.len - 1)
   m3 /= float(s.len) * pow(m2p, 1.5)
   m4 /= float(s.len) * (m2p * m2p)
-  SamplingDistribution[T](s: t, m1: m1, m2: m2, m3: m3, m4: m4 - 3.0)
+  SamplingDistribution[T](s: t, v: toSeq(s.items), m1: m1, m2: m2, m3: m3, m4: m4 - 3.0)
 
 converter `$`*[T](d: SamplingDistribution[T]): string =
   fmt"Sampling({d.s})"
@@ -94,3 +92,16 @@ method mode*[T](d: SamplingDistribution[T]): seq[T] =
     current = count
   elif count == current:
     result.add(prev)
+
+proc covariance*[T](x, y: SamplingDistribution[T]): float =
+  if x.v.len != y.v.len:
+    raise newException(ValueError, "samples must be of the same size")
+  let size = x.v.len - 1
+  let xm = x.mean()
+  let ym = y.mean()
+  for i in 0..size:
+    result += (float(x.v[i]) - xm) * (float(y.v[i]) - ym)
+  result /= float(size)
+
+proc correlation*[T](x, y: SamplingDistribution[T]): float =
+  covariance(x, y) / (x.std * y.std)

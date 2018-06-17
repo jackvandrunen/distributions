@@ -48,3 +48,7 @@ suite "statistics-Sampling":
     check(approx(d.std, 1.544786))
     check(approx(d.skewness, 0.898278))
     check(approx(d.kurtosis, -0.21388))
+  
+  test "correlation":
+    check(approx(covariance(@[1, 2, 3, 4, 5], @[5, 4, 3, 2, 1]), -2.5))
+    check(approx(correlation(@[1, 2, 3, 4, 5], @[5, 4, 3, 2, 1]), -1.0))
