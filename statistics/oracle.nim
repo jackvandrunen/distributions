@@ -1,7 +1,7 @@
 type
-  PCG32Random = ref object
-    state, stream: uint64
+  PCG32Random = ref tuple[state, stream: uint64]
   Oracle = ref object
+    seed*: array[0..3, uint64]
     s1, s2: PCG32Random
 
 var defaultState: Oracle
@@ -11,6 +11,7 @@ proc toUniform(a, b: uint32): float64 =
 
 proc initOracle*(seed: array[0..3, uint64]): Oracle =
   result = new Oracle
+  result.seed = seed
   result.s1 = new PCG32Random
   result.s1.state = seed[0]
   result.s1.stream = seed[1] or 1'u64
@@ -37,12 +38,15 @@ when defined(nimscript):
 else:
   import times
   proc initOracle*(): Oracle =
+    var s1 = new PCG32Random
+    s1.state = uint64(epochTime() * 1_000_000_000)
+    s1.stream = uint64(cast[int](addr s1)) or 1'u64
+    var s2 = new PCG32Random
+    s2.state = uint64(epochTime() * 1_000_000_000)
+    s2.stream = uint64(cast[int](addr s2)) or 1'u64
     result = new Oracle
-    result.s1 = new PCG32Random
-    result.s1.state = uint64(epochTime() * 1_000_000_000)
-    result.s1.stream = uint64(cast[int](addr result.s1)) or 1'u64
-    result.s2 = new PCG32Random
-    result.s2.state = uint64(epochTime() * 1_000_000_000)
-    result.s2.stream = uint64(cast[int](addr result.s2)) or 1'u64
+    result.s1 = s1
+    result.s2 = s2
+    result.seed = [s1.state, s1.stream, s2.state, s2.stream]
 
 defaultState = initOracle()
