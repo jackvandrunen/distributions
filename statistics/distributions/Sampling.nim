@@ -1,4 +1,5 @@
 import ../distributions
+import ../variables
 import math
 import sequtils
 import strformat
@@ -34,9 +35,12 @@ converter `$`*[T](d: SamplingDistribution[T]): string =
 converter Sampling*[T](s: seq[T]): SamplingDistribution[T] =
   Sampling(openarray(s))
 
+proc len*[T](d: SamplingDistribution[T]): int =
+  d.s.len
+
 method pmf*[T](d: SamplingDistribution[T], x: T): float =
   var i = binarySearch(d.s, x)
-  let iMax = d.s.len - 1
+  let iMax = d.len - 1
   if i < 0:
     return 0.0
   while i > 0 and d.s[i - 1] == x:
@@ -44,7 +48,7 @@ method pmf*[T](d: SamplingDistribution[T], x: T): float =
   let start = i
   while i < iMax and d.s[i + 1] == x:
     inc i
-  float((i - start) + 1) / float(d.s.len)
+  float((i - start) + 1) / float(d.len)
 
 method cdf*[T](d: SamplingDistribution[T], x: T): float =
   var count = 0
@@ -52,11 +56,11 @@ method cdf*[T](d: SamplingDistribution[T], x: T): float =
     if i > x:
       break
     inc count
-  return float(count) / float(d.s.len)
+  return float(count) / float(d.len)
 
 method quantile*[T](d: SamplingDistribution[T], q: float): T =
   checkNormal(q)
-  d.s[int(q * float(d.s.len))]
+  d.s[int(q * float(d.len))]
 
 method mean*[T](d: SamplingDistribution[T]): float =
   d.m1
@@ -94,9 +98,9 @@ method mode*[T](d: SamplingDistribution[T]): seq[T] =
     result.add(prev)
 
 proc covariance*[T](x, y: SamplingDistribution[T]): float =
-  if x.v.len != y.v.len:
+  if x.len != y.len:
     raise newException(ValueError, "samples must be of the same size")
-  let size = x.v.len - 1
+  let size = x.len - 1
   let xm = x.mean()
   let ym = y.mean()
   for i in 0..size:
@@ -105,3 +109,9 @@ proc covariance*[T](x, y: SamplingDistribution[T]): float =
 
 proc correlation*[T](x, y: SamplingDistribution[T]): float =
   covariance(x, y) / (x.std * y.std)
+
+proc se*[T, U](d: SamplingDistribution[T], t: proc(d: SamplingDistribution[T]): U, b: int): float =
+  var boot = newSeq[U](b)
+  for i in 0..b - 1:
+    boot[i] = t(d.sample(d.len))
+  result = std(boot)

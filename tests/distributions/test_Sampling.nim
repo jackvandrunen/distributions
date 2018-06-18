@@ -52,3 +52,6 @@ suite "statistics-Sampling":
   test "correlation":
     check(approx(covariance(@[1, 2, 3, 4, 5], @[5, 4, 3, 2, 1]), -2.5))
     check(approx(correlation(@[1, 2, 3, 4, 5], @[5, 4, 3, 2, 1]), -1.0))
+
+  test "bootstrap":
+    check(approx(d.se(mean[int], 1000), 0.4, 0.1))
