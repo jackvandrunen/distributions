@@ -56,4 +56,7 @@ suite "statistics-Sampling":
   test "bootstrap":
     check(approx(d.se(mean[int], 1000), 0.4, 0.1))
     let c = d.ci(mean[int], 1000)
-    check(c.l < d.mean and d.mean < c.u)
+    check(c.l <= d.mean and d.mean <= c.u)
+    let c2 = ci(@[1, 2, 3, 4, 5], @[5, 4, 3, 2, 1], covariance[int], 100)
+    let cov = covariance(@[1, 2, 3, 4, 5], @[5, 4, 3, 2, 1])
+    check(c2.l <= cov and cov <= c2.u)

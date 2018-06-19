@@ -1,6 +1,7 @@
 import ../distributions
 import ../variables
 import ./Normal
+import ../oracle
 import math
 import sequtils
 import strformat
@@ -111,13 +112,33 @@ proc covariance*[T](x, y: SamplingDistribution[T]): float =
 proc correlation*[T](x, y: SamplingDistribution[T]): float =
   covariance(x, y) / (x.std * y.std)
 
+proc jointSample*[T, U](da: SamplingDistribution[T], db: SamplingDistribution[U], n: int): tuple[a: seq[T], b: seq[U]] =
+  let scale = float(da.len)
+  result = (newSeq[T](n), newSeq[U](n))
+  for i in 0..n - 1:
+    let r = int(rand() * scale)
+    result.a[i] = da.v[r]
+    result.b[i] = db.v[r]
+
 proc se*[T, U](d: SamplingDistribution[T], t: proc(d: SamplingDistribution[T]): U, b: int): float =
   var boot = newSeq[U](b)
   for i in 0..b - 1:
     boot[i] = t(d.sample(d.len))
   result = std(boot)
 
+proc se*[T, U, V](da: SamplingDistribution[T], db: SamplingDistribution[V], t: proc(da: SamplingDistribution[T], db: SamplingDistribution[V]): U, b: int): float =
+  var boot = newSeq[U](b)
+  for i in 0..b - 1:
+    let ss = jointSample(da, db, da.len)
+    boot[i] = t(ss.a, ss.b)
+  result = std(boot)
+
 proc ci*[T, U](d: SamplingDistribution[T], t: proc(d: SamplingDistribution[T]): U, b: int, a = 0.95): tuple[l, u: float] =
   let s = t(d)
   let e = d.se(t, b) * abs(Z.quantile((1.0 - a) / 2.0))
+  (s - e, s + e)
+
+proc ci*[T, U, V](da: SamplingDistribution[T], db: SamplingDistribution[V], t: proc(da: SamplingDistribution[T], db: SamplingDistribution[V]): U, b: int, a = 0.95): tuple[l, u: float] =
+  let s = t(da, db)
+  let e = se(da, db, t, b) * abs(Z.quantile((1.0 - a) / 2.0))
   (s - e, s + e)
