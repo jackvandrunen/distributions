@@ -11,6 +11,8 @@ type
     m*: float
     v*: float
 
+let Z* = NormalDistribution(m: 0.0, v: 1.0)
+
 proc Normal*(mean: float, variance: float): NormalDistribution =
   NormalDistribution(m: mean, v: variance)
 

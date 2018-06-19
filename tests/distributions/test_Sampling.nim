@@ -55,3 +55,5 @@ suite "statistics-Sampling":
 
   test "bootstrap":
     check(approx(d.se(mean[int], 1000), 0.4, 0.1))
+    let c = d.ci(mean[int], 1000)
+    check(c.l < d.mean and d.mean < c.u)

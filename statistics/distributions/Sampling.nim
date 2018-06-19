@@ -1,5 +1,6 @@
 import ../distributions
 import ../variables
+import ./Normal
 import math
 import sequtils
 import strformat
@@ -115,3 +116,8 @@ proc se*[T, U](d: SamplingDistribution[T], t: proc(d: SamplingDistribution[T]): 
   for i in 0..b - 1:
     boot[i] = t(d.sample(d.len))
   result = std(boot)
+
+proc ci*[T, U](d: SamplingDistribution[T], t: proc(d: SamplingDistribution[T]): U, b: int, a = 0.95): tuple[l, u: float] =
+  let s = t(d)
+  let e = d.se(t, b) * abs(Z.quantile((1.0 - a) / 2.0))
+  (s - e, s + e)
