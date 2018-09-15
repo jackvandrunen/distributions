@@ -1,4 +1,4 @@
-import ../../statistics/distributions/Exponential
+import ../../distributions/distributions/exponentialdistribution
 import ../ut_utils
 import sets
 import unittest

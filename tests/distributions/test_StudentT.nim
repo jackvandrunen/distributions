@@ -1,4 +1,4 @@
-import ../../statistics/distributions/StudentT
+import ../../distributions/distributions/studenttdistribution
 import ../ut_utils
 import sets
 import unittest

@@ -1,8 +1,8 @@
-import ../distributions
+import ../basedistribution
 import strformat
 include ./utils
 
-export distributions
+export basedistribution
 
 type
   PointMassDistribution*[T: SomeNumber] = ref object of Distribution[T]

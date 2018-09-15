@@ -1,10 +1,10 @@
-import ../distributions
+import ../basedistribution
 import ../roots
 import math
 import strformat
 include ./utils
 
-export distributions
+export basedistribution
 
 type
   GeometricDistribution* = ref object of Distribution[int]

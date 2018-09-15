@@ -1,6 +1,6 @@
-import ../statistics/variables
-import ../statistics/distributions/DiscreteUniform
-import ../statistics/distributions/Uniform
+import ../distributions/variables
+import ../distributions/distributions/discreteuniformdistribution
+import ../distributions/distributions/uniformdistribution
 import ./ut_utils
 import math
 import unittest

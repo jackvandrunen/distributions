@@ -1,4 +1,4 @@
-import ../../statistics/distributions/Cauchy
+import ../../distributions/distributions/cauchydistribution
 import ../ut_utils
 import sets
 import unittest

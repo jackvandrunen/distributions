@@ -1,6 +1,6 @@
-import ../distributions
+import ../basedistribution
 import ../variables
-import ./Normal
+import ./normaldistribution
 import ../oracle
 import math
 import sequtils
@@ -9,7 +9,7 @@ import algorithm
 import hashes
 include ./utils
 
-export distributions
+export basedistribution
 
 type
   SamplingDistribution*[T: SomeNumber] = ref object of Distribution[T]

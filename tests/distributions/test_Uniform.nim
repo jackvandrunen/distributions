@@ -1,4 +1,4 @@
-import ../../statistics/distributions/Uniform
+import ../../distributions/distributions/uniformdistribution
 import ../ut_utils
 import sets
 import unittest

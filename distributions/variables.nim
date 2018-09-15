@@ -1,4 +1,4 @@
-import ./distributions
+import ./basedistribution
 import ./oracle
 import sequtils
 

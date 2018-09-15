@@ -1,4 +1,4 @@
-import ../../statistics/distributions/Gamma
+import ../../distributions/distributions/gammadistribution
 import ../ut_utils
 import sets
 import unittest

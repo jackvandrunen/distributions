@@ -1,4 +1,4 @@
-import ../statistics/oracle
+import ../distributions/oracle
 import ./ut_utils
 import unittest
 

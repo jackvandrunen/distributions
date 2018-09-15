@@ -1,4 +1,4 @@
-import ../../statistics/distributions/Poisson
+import ../../distributions/distributions/poissondistribution
 import ../ut_utils
 import sets
 import unittest

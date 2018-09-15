@@ -1,4 +1,4 @@
-import ../../statistics/distributions/PointMass
+import ../../distributions/distributions/pointmassdistribution
 import ../ut_utils
 import sets
 import unittest

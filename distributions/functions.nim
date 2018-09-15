@@ -197,7 +197,7 @@ proc incbet*(aa, bb, xx: float64): float64 =
     t *= pow(x, a)
     t /= a
     t *= w
-    t *= tgamma(a + b) / (tgamma(a) * tgamma(b))
+    t *= gamma(a + b) / (gamma(a) * gamma(b))
     if flag:
       if t <= MACHEP:
         t = 1.0 - MACHEP
@@ -358,7 +358,7 @@ proc pseries(a, b, x: float64): float64 =
   s += ai
   u = a * ln(x)
   if a + b < MAXGAM and abs(u) < MAXLOG:
-    t = tgamma(a + b) / (tgamma(a) * tgamma(b))
+    t = gamma(a + b) / (gamma(a) * gamma(b))
     s = s * t * pow(x, a)
   else:
     t = lgamma(a + b) - lgamma(a) - lgamma(b) + u + ln(s)

@@ -1,4 +1,4 @@
-import ../../statistics/distributions/LogNormal
+import ../../distributions/distributions/lognormaldistribution
 import ../ut_utils
 import sets
 import unittest

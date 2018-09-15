@@ -1,4 +1,4 @@
-import ../../statistics/distributions/Geometric
+import ../../distributions/distributions/geometricdistribution
 import ../ut_utils
 import sets
 import unittest

@@ -1,11 +1,11 @@
-import ../distributions
+import ../basedistribution
 import ../functions
 import ../roots
 import math
 import strformat
 include ./utils
 
-export distributions
+export basedistribution
 
 type
   StudentTDistribution* = ref object of Distribution[float]

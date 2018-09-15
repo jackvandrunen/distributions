@@ -1,4 +1,4 @@
-import ../../statistics/distributions/ChiSquared
+import ../../distributions/distributions/chisquareddistribution
 import ../ut_utils
 import sets
 import unittest

@@ -1,4 +1,4 @@
-import ../../statistics/distributions/Bernoulli
+import ../../distributions/distributions/bernoullidistribution
 import ../ut_utils
 import sets
 import unittest

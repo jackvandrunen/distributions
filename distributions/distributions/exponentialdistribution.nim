@@ -1,9 +1,9 @@
-import ../distributions
+import ../basedistribution
 import math
 import strformat
 include ./utils
 
-export distributions
+export basedistribution
 
 type
   ExponentialDistribution* = ref object of Distribution[float]

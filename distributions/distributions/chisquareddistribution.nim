@@ -1,11 +1,11 @@
-import ../distributions
+import ../basedistribution
 import ../functions
 import ../roots
 import math
 import strformat
 include ./utils
 
-export distributions
+export basedistribution
 
 type
   ChiSquaredDistribution* = ref object of Distribution[float]
@@ -19,7 +19,7 @@ converter `$`*(d: ChiSquaredDistribution): string =
 
 method pdf*(d: ChiSquaredDistribution, x: float): float =
   let a = 0.5 * d.p
-  let b = 1.0 / tgamma(a)
+  let b = 1.0 / gamma(a)
   if x > 0.0:
     result = (b / pow(2.0, a)) * pow(x, a - 1.0) * exp(-0.5 * x)
 

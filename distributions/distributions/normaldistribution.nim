@@ -1,10 +1,10 @@
-import ../distributions
+import ../basedistribution
 import ../functions
 import math
 import strformat
 include ./utils
 
-export distributions
+export basedistribution
 
 type
   NormalDistribution* = ref object of Distribution[float]

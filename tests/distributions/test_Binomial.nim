@@ -1,4 +1,4 @@
-import ../../statistics/distributions/Binomial
+import ../../distributions/distributions/binomialdistribution
 import ../ut_utils
 import sets
 import unittest

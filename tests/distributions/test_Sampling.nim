@@ -1,4 +1,4 @@
-import ../../statistics/distributions/Sampling
+import ../../distributions/distributions/samplingdistribution
 import ../ut_utils
 import sets
 import unittest

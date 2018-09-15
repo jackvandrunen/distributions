@@ -1,4 +1,4 @@
-import ../../statistics/distributions/Beta
+import ../../distributions/distributions/betadistribution
 import ../ut_utils
 import sets
 import unittest
